@@ -1,0 +1,39 @@
+name: GUIs
+version: '${project.version}'
+main: me.isaacfediw.guis.GUIs
+api-version: 1.19
+commands:
+  itemshop:
+    description: opens bedwars item shop
+    usage: /<command>
+  upgrades:
+    description: opens bedwars upgrades shop
+    usage: /<command>
+  generator:
+    description: creates an item spawner of the specified resource at the specified location
+    usage: /<command>
+    aliases: [g]
+  bedwarsteam:
+    description: adds the specified player to the specified team
+    usage: /<command>
+    aliases: [bt]
+  startgame:
+    description: starts the bedwars game. Only use once there is atleast 1 member assinged to one team!
+    usage: /<command>
+    aliases: [sg]
+  stopgame:
+    description: stops the bedwars game
+    usage: /<command>
+  queue:
+    description: adds player to the queue
+    usage : /<command>
+  openScoreboard:
+    description: opens scoreboard on the right hand of the screen
+    usage: /<command>
+  bwWand:
+    description: gives player the bedwars arena wand
+    usage: /<command>
+  vanish:
+    description: vanishes a player
+    usage: /<command>
+    aliases: [v]
