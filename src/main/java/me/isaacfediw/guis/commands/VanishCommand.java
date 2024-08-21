@@ -9,13 +9,13 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
+import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
-public class Vanish implements CommandExecutor {
+public class VanishCommand implements CommandExecutor {
 
     GUIs plugin;
     private ArrayList<Player> vanishedPlayers = new ArrayList<>();
-    public Vanish(GUIs p){
+    public VanishCommand(GUIs p){
         plugin = p;
     }
 
@@ -36,8 +36,8 @@ public class Vanish implements CommandExecutor {
         return true;
     }
 
-    public void vanishPlayer(Player p){
-        if (!vanishedPlayers.contains(p)){
+    public void vanishPlayer(Player p) {
+        if (!vanishedPlayers.contains(p)) {
             vanishedPlayers.add(p);
             for (Player player : queuedPlayers){
                 if (player.isOnline()){
@@ -45,7 +45,7 @@ public class Vanish implements CommandExecutor {
                 }
             }
             System.out.println((p.getName() + " is now vanished!"));
-        }else{
+        } else {
             vanishedPlayers.remove(p);
             for (Player player : queuedPlayers){
                 if (player.isOnline()){

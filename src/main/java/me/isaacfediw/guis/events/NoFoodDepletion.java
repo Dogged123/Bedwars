@@ -1,7 +1,6 @@
 package me.isaacfediw.guis.events;
 
-import me.isaacfediw.guis.commands.queue;
-import org.bukkit.Bukkit;
+import me.isaacfediw.guis.commands.QueueCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +12,7 @@ public class NoFoodDepletion implements Listener {
     public void onFoodDepletion(FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (queue.queuedPlayers.contains(p)) {
+            if (QueueCommand.queuedPlayers.contains(p)) {
                 e.setCancelled(true);
             }
         }

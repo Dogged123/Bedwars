@@ -2,11 +2,10 @@ package me.isaacfediw.guis;
 
 import me.isaacfediw.guis.commands.*;
 import me.isaacfediw.guis.events.*;
-import me.isaacfediw.guis.events.shops.menuHandler;
-import me.isaacfediw.guis.events.shops.onShopClick;
-import me.isaacfediw.guis.events.shops.villagerCommandExecutor;
+import me.isaacfediw.guis.events.shops.ItemShopListener;
+import me.isaacfediw.guis.events.shops.ShopListeners;
+import me.isaacfediw.guis.events.shops.ShopKeeperListeners;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -22,34 +21,34 @@ public final class GUIs extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        getCommand("itemshop").setExecutor(new shopCommand());
-        getCommand("upgrades").setExecutor(new upgradeShopCommand());
+        getCommand("itemshop").setExecutor(new ItemShopCommand());
+        getCommand("upgrades").setExecutor(new UpgradeShopCommand());
         getCommand("generator").setExecutor(this);
-        getCommand("bedwarsteam").setExecutor(new teamAdder(this));
-        getCommand("startgame").setExecutor(new bedwarsStart(this));
-        getCommand("bwWand").setExecutor(new GetWand());
-        getCommand("stopgame").setExecutor(new bedwarsStop(this));
-        getCommand("queue").setExecutor(new queue(this));
-        getCommand("openScoreboard").setExecutor(new openScoreboard());
-        getCommand("vanish").setExecutor(new Vanish(this));
-        getServer().getPluginManager().registerEvents(new onShopClick(this), this);
-        getServer().getPluginManager().registerEvents(new villagerCommandExecutor(), this);
-        getServer().getPluginManager().registerEvents(new armorInteractionPrevention(), this);
-        getServer().getPluginManager().registerEvents(new preventExplosions(), this);
-        getServer().getPluginManager().registerEvents(new gameLogicEvents(this), this);
-        getServer().getPluginManager().registerEvents(new autoTnt(), this);
-        getServer().getPluginManager().registerEvents(new menuHandler(this), this);
-        getServer().getPluginManager().registerEvents(new throwableFireballs(), this);
-        getServer().getPluginManager().registerEvents(new blockBreakControl(this), this);
-        getServer().getPluginManager().registerEvents(new itemManager(this), this);
-        getServer().getPluginManager().registerEvents(new onPlayerDeath(this), this);
-        getServer().getPluginManager().registerEvents(new UseWand(), this);
-        getServer().getPluginManager().registerEvents(new AddOrDelBaseHandler(this), this);
+        getCommand("bedwarsteam").setExecutor(new TeamAdder(this));
+        getCommand("startgame").setExecutor(new StartCommand(this));
+        getCommand("bwWand").setExecutor(new WandCommand());
+        getCommand("stopgame").setExecutor(new StopCommand(this));
+        getCommand("queue").setExecutor(new QueueCommand(this));
+        getCommand("openScoreboard").setExecutor(new OpenScoreboard());
+        getCommand("vanish").setExecutor(new VanishCommand(this));
+        getServer().getPluginManager().registerEvents(new ShopListeners(this), this);
+        getServer().getPluginManager().registerEvents(new ShopKeeperListeners(), this);
+        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
+        getServer().getPluginManager().registerEvents(new GameEvents(this), this);
+        getServer().getPluginManager().registerEvents(new TNTListener(), this);
+        getServer().getPluginManager().registerEvents(new ItemShopListener(this), this);
+        getServer().getPluginManager().registerEvents(new FireballListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockEvents(this), this);
+        getServer().getPluginManager().registerEvents(new ItemManager(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathEvent(this), this);
+        getServer().getPluginManager().registerEvents(new WandListener(), this);
+        getServer().getPluginManager().registerEvents(new WandMenuListener(this), this);
         getServer().getPluginManager().registerEvents(new MakeGolemAgro(this), this);
         getServer().getPluginManager().registerEvents(new HasteOnMove(this), this);
-        getServer().getPluginManager().registerEvents(new VoidInstaDeath(), this);
+        getServer().getPluginManager().registerEvents(new VoidListener(), this);
         getServer().getPluginManager().registerEvents(new PreventFriendlyFire(this), this);
-        getServer().getPluginManager().registerEvents(new generatorSplitting(this), this);
+        getServer().getPluginManager().registerEvents(new SplitGens(this), this);
         getServer().getPluginManager().registerEvents(new NoFoodDepletion(), this);
         saveDefaultConfig();
     }
@@ -59,13 +58,13 @@ public final class GUIs extends JavaPlugin {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (!p.hasPermission("GUIs.generator")) {
-                p.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+                p.sendMessage("§cYou do not have permission to run this command");
                 return true;
             }
             try {
                 if (args.length < 5) {
-                    p.sendMessage(ChatColor.RED + "Please specify a location, spawn frequency, spawn length, and resource");
-                    p.sendMessage(ChatColor.RED + "Example: 0 64 0 40 150 IRON_INGOT");
+                    p.sendMessage("§cPlease specify a location, spawn frequency, spawn length, and resource");
+                    p.sendMessage("§cExample: 0 64 0 40 150 IRON_INGOT");
                 } else {
                     Location loc = new Location(p.getWorld(), Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]));
                     int frequency = Integer.parseInt(args[3]);
@@ -83,7 +82,7 @@ public final class GUIs extends JavaPlugin {
         return true;
     }
 
-    public void generator(Location loc, int frequency, String resource, int l){
+    public void generator(Location loc, int frequency, String resource, int l) {
         stop = false;
         new BukkitRunnable() {
             int length = l;

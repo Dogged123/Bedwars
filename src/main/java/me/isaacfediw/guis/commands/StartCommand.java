@@ -1,16 +1,17 @@
 package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.events.gameLogicEvents;
-import org.bukkit.ChatColor;
+import me.isaacfediw.guis.events.GameEvents;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class bedwarsStart implements CommandExecutor {
+import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
+
+public class StartCommand implements CommandExecutor {
     GUIs plugin;
-    public bedwarsStart(GUIs p){
+    public StartCommand(GUIs p){
         plugin = p;
     }
 
@@ -18,10 +19,18 @@ public class bedwarsStart implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
         if (!p.hasPermission("GUIs.startgame")){
-            p.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            p.sendMessage("§cYou do not have permission to run this command");
             return true;
         }
-        gameLogicEvents gam = new gameLogicEvents(plugin);
+
+        if (queuedPlayers.isEmpty()) {
+            p.sendMessage("§cThere are no players in the queue!");
+            return true;
+        }
+
+        p.sendMessage("§aGame Started");
+
+        GameEvents gam = new GameEvents(plugin);
         gam.startGame();
         return true;
     }

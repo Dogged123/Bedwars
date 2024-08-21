@@ -1,18 +1,18 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class AddOrDelBaseHandler implements Listener {
+public class WandMenuListener implements Listener {
     GUIs plugin;
-    public AddOrDelBaseHandler(GUIs p){
+    public WandMenuListener(GUIs p){
         plugin = p;
     }
+
     @EventHandler
     public void onQueOrArenaClick(InventoryClickEvent e){
         Player p = (Player) e.getWhoClicked();
@@ -139,17 +139,17 @@ public class AddOrDelBaseHandler implements Listener {
 
         plugin.getConfig().set(locationName, loc);
         plugin.saveConfig();
-        p.sendMessage(ChatColor.LIGHT_PURPLE + locationName + " area set to your location!");
+        p.sendMessage("§d" + locationName + " area set to your location!");
     }
 
     public void removeArena(String locationName, Player p){
         if (plugin.getConfig().get(locationName) == null){
-            p.sendMessage(ChatColor.RED + "This area is not set up!");
+            p.sendMessage("§cThis area is not set up!");
             p.closeInventory();
             return;
         }
         plugin.getConfig().set(locationName, null);
         plugin.saveConfig();
-        p.sendMessage(ChatColor.LIGHT_PURPLE + locationName + " area removed!");
+        p.sendMessage("§d" + locationName + " area removed!");
     }
 }

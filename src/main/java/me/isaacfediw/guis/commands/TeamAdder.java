@@ -1,9 +1,8 @@
 package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.events.gameLogicEvents;
+import me.isaacfediw.guis.events.GameEvents;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -14,13 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-public class teamAdder implements CommandExecutor {
+import static me.isaacfediw.guis.commands.QueueCommand.team;
+
+public class TeamAdder implements CommandExecutor {
 
     String playerName;
     Player target;
     GUIs plugin;
 
-    public teamAdder(GUIs p){
+    public TeamAdder(GUIs p){
         plugin = p;
     }
 
@@ -29,7 +30,7 @@ public class teamAdder implements CommandExecutor {
 
         Player p = (Player) sender;
         if (!p.hasPermission("GUIs.bedwarsteam")) {
-            p.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            p.sendMessage("§cYou do not have permission to run this command");
             return true;
         }
         if (args.length != 2) {
@@ -38,33 +39,40 @@ public class teamAdder implements CommandExecutor {
             playerName = args[1];
             target = Bukkit.getPlayerExact(playerName);
             if (target == null){
-                p.sendMessage(ChatColor.RED + "That player is not online!");
+                p.sendMessage("§cThat player is not online!");
                 return true;
             }
             addToTeam(target, args);
         }
         return true;
     }
-    public void addToTeam(Player p, String[] args){
+
+    public void addToTeam(Player p, String[] args) {
+        if (!team.containsKey(p)) team.put(p, "N/A");
+
         if (args[0].equalsIgnoreCase("Red")) {
             addToTeam(p, 0);
-            p.sendMessage(ChatColor.GREEN + "Successfully added " + playerName + " to " + args[0] + " team!");
-        } else if (args[0].equalsIgnoreCase("Yellow")){
+            team.replace(p, "Red");
+            p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
+        } else if (args[0].equalsIgnoreCase("Yellow")) {
             addToTeam(p, 1);
-            p.sendMessage(ChatColor.GREEN + "Successfully added " + playerName + " to " + args[0] + " team!");
-        }else if (args[0].equalsIgnoreCase("Blue")){
+            team.replace(p, "Yellow");
+            p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
+        }else if (args[0].equalsIgnoreCase("Blue")) {
             addToTeam(p, 2);
-            p.sendMessage(ChatColor.GREEN + "Successfully added " + playerName + " to " + args[0] + " team!");
-        }else if (args[0].equalsIgnoreCase("Black")){
+            team.replace(p, "Blue");
+            p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
+        }else if (args[0].equalsIgnoreCase("Black")) {
             addToTeam(p, 3);
-            p.sendMessage(ChatColor.GREEN + "Successfully added " + playerName + " to " + args[0] + " team!");
-        }else{
-            p.sendMessage(ChatColor.RED + "Please enter a valid team (Red, Yellow, Blue, or Black)");
+            team.replace(p, "Black");
+            p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
+        }else {
+            p.sendMessage("§cPlease enter a valid team (Red, Yellow, Blue, or Black)");
         }
     }
 
-    public void addToTeam(Player p, int index){
-        gameLogicEvents gam = new gameLogicEvents(plugin);
+    public void addToTeam(Player p, int index) {
+        GameEvents gam = new GameEvents(plugin);
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
         ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
         ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
@@ -79,9 +87,9 @@ public class teamAdder implements CommandExecutor {
         LeatherArmorMeta legMeta1 = (LeatherArmorMeta) legMeta;
         LeatherArmorMeta bootMeta1 = (LeatherArmorMeta) bootMeta;
 
-        if (index == 0){
+        if (index == 0) {
             gam.addToTeam(0, p);
-            p.setPlayerListName(ChatColor.RED + p.getName());
+            p.setPlayerListName("§c" + p.getName());
             helmMeta1.setColor(Color.RED);
             chestMeta1.setColor(Color.RED);
             legMeta1.setColor(Color.RED);
@@ -94,9 +102,9 @@ public class teamAdder implements CommandExecutor {
             p.getInventory().setChestplate(chestplate);
             p.getInventory().setLeggings(leggings);
             p.getInventory().setBoots(boots);
-        }else if (index == 1){
+        } else if (index == 1) {
             gam.addToTeam(1, p);
-            p.setPlayerListName(ChatColor.YELLOW + p.getName());
+            p.setPlayerListName("§e" + p.getName());
             helmMeta1.setColor(Color.YELLOW);
             chestMeta1.setColor(Color.YELLOW);
             legMeta1.setColor(Color.YELLOW);
@@ -109,9 +117,9 @@ public class teamAdder implements CommandExecutor {
             p.getInventory().setChestplate(chestplate);
             p.getInventory().setLeggings(leggings);
             p.getInventory().setBoots(boots);
-        }else if (index == 2){
+        } else if (index == 2) {
             gam.addToTeam(2, p);
-            p.setPlayerListName(ChatColor.BLUE + p.getName());
+            p.setPlayerListName("§1" + p.getName());
             helmMeta1.setColor(Color.BLUE);
             chestMeta1.setColor(Color.BLUE);
             legMeta1.setColor(Color.BLUE);
@@ -124,9 +132,9 @@ public class teamAdder implements CommandExecutor {
             p.getInventory().setChestplate(chestplate);
             p.getInventory().setLeggings(leggings);
             p.getInventory().setBoots(boots);
-        }else if (index == 3){
+        } else if (index == 3) {
             gam.addToTeam(3, p);
-            p.setPlayerListName(ChatColor.BLACK + p.getName());
+            p.setPlayerListName("§0" + p.getName());
             helmMeta1.setColor(Color.BLACK);
             chestMeta1.setColor(Color.BLACK);
             legMeta1.setColor(Color.BLACK);

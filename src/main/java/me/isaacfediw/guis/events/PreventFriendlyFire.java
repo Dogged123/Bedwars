@@ -1,7 +1,6 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.commands.openScoreboard;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +9,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
+import static me.isaacfediw.guis.commands.QueueCommand.lifeStatus;
+import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class PreventFriendlyFire implements Listener {
 
@@ -26,17 +26,13 @@ public class PreventFriendlyFire implements Listener {
             Player p = (Player) e.getEntity();
             Player player = (Player) e.getDamager();
 
-            PersistentDataContainer container = p.getPersistentDataContainer();
-            PersistentDataContainer container2 = player.getPersistentDataContainer();
-            NamespacedKey team = new NamespacedKey(plugin, "Team");
-            NamespacedKey lifeStatus = new NamespacedKey(plugin, "Life_Status");
+            if (!team.containsKey(p)) return;
+            if (!lifeStatus.containsKey(p) || !lifeStatus.containsKey(player)) return;
+            if (lifeStatus.get(p).equals("N/A") || lifeStatus.get(player).equals("N/A")) return;
 
-            if (container.get(lifeStatus, PersistentDataType.STRING).equals("N/A") && container2.get(lifeStatus, PersistentDataType.STRING).equals("N/A")){
-                return;
-            }
-            if (container.get(team, PersistentDataType.STRING).equals(container2.get(team, PersistentDataType.STRING))) {
+            if (team.get(p).equals(team.get(p))) {
                 e.setCancelled(true);
-            }else if (container.get(lifeStatus, PersistentDataType.STRING).equals("In_Queue") || container2.get(lifeStatus, PersistentDataType.STRING).equals("In_Queue")){
+            } else if (lifeStatus.get(p).equals("In_Queue") || lifeStatus.get(player).equals("In_Queue")){
                 e.setCancelled(true);
             }
         }

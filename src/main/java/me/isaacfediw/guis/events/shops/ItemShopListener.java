@@ -1,7 +1,7 @@
 package me.isaacfediw.guis.events.shops;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.commands.shopCommand;
+import me.isaacfediw.guis.commands.ItemShopCommand;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -16,14 +16,19 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
-public class menuHandler implements Listener {
+
+import static me.isaacfediw.guis.commands.QueueCommand.team;
+
+public class ItemShopListener implements Listener {
 
     GUIs plugin;
 
-    shopCommand shop = new shopCommand();
-    public menuHandler(GUIs p){
+    ItemShopCommand shop = new ItemShopCommand();
+
+    public ItemShopListener(GUIs p){
         plugin = p;
     }
+
     @EventHandler
     public void onWeaponClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
@@ -95,7 +100,7 @@ public class menuHandler implements Listener {
         }
         diamondBoots.setItemMeta(diamondBootsMeta);
 
-        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Combat")) {
+        if (e.getView().getTitle().equalsIgnoreCase("§6Combat")) {
             switch (e.getSlot()) {
                 case 36:
                     p.closeInventory();
@@ -121,9 +126,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(stoneSword);
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Stone Sword");
+                        p.sendMessage("§6Purchased Stone Sword");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase a stone sword!");
+                        p.sendMessage("§cYou do not have enough iron to purchase a stone sword!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -142,9 +147,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(ironSword);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 7));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Iron Sword");
+                        p.sendMessage("§6Purchased Iron Sword");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase an iron sword!");
+                        p.sendMessage("§cYou do not have enough gold to purchase an iron sword!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -163,9 +168,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(diamondSword);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Diamond Sword");
+                        p.sendMessage("§6Purchased Diamond Sword");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase a diamond sword!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase a diamond sword!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -178,9 +183,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(kb_stick);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 5));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased KnockBack Stick");
+                        p.sendMessage("§6Purchased KnockBack Stick");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase a knockback stick!");
+                        p.sendMessage("§cYou do not have enough gold to purchase a knockback stick!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -190,9 +195,9 @@ public class menuHandler implements Listener {
                         p.getInventory().setBoots(ironBoots);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 12));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Iron Armor");
+                        p.sendMessage("§6Purchased Iron Armor");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase iron armor!");
+                        p.sendMessage("§cYou do not have enough gold to purchase iron armor!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -202,9 +207,9 @@ public class menuHandler implements Listener {
                         p.getInventory().setBoots(diamondBoots);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 6));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Diamond Armor");
+                        p.sendMessage("§6Purchased Diamond Armor");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase diamond armor!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase diamond armor!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -213,9 +218,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.BOW));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 12));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Bow");
+                        p.sendMessage("§6Purchased Bow");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase bow!");
+                        p.sendMessage("§cYou do not have enough gold to purchase bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -228,9 +233,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(power_bow);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 24));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Power Bow");
+                        p.sendMessage("§6Purchased Power Bow");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase power bow!");
+                        p.sendMessage("§cYou do not have enough gold to purchase power bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -244,9 +249,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(punch_bow);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 6));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Punch Bow");
+                        p.sendMessage("§6Purchased Punch Bow");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase punch bow!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase punch bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -255,9 +260,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.ARROW, 2));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 2));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Arrows");
+                        p.sendMessage("§6Purchased Arrows");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase arrows!");
+                        p.sendMessage("§cYou do not have enough gold to purchase arrows!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
             }
@@ -269,7 +274,7 @@ public class menuHandler implements Listener {
     public void onToolsClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Tools")) {
+        if (e.getView().getTitle().equalsIgnoreCase("§6Tools")) {
             if (e.getCurrentItem() == null){
                 return;
             }
@@ -283,9 +288,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.getInventory().addItem(new ItemStack(Material.WOODEN_PICKAXE));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Wooden Pickaxe");
+                        p.sendMessage("§6Purchased Wooden Pickaxe");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase a wooden pickaxe!");
+                        p.sendMessage("§cYou do not have enough iron to purchase a wooden pickaxe!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -299,9 +304,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(new ItemStack(Material.WOODEN_PICKAXE, 1));
                         p.getInventory().addItem(iPick);
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Iron Pickaxe");
+                        p.sendMessage("§6Purchased Iron Pickaxe");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase an iron pickaxe!");
+                        p.sendMessage("§cYou do not have enough iron to purchase an iron pickaxe!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -319,9 +324,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(iPick);
                         p.getInventory().addItem(dPick);
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Diamond Pickaxe");
+                        p.sendMessage("§6Purchased Diamond Pickaxe");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase a diamond pickaxe!");
+                        p.sendMessage("§cYou do not have enough gold to purchase a diamond pickaxe!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -330,9 +335,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 20));
                         p.getInventory().addItem(new ItemStack(Material.SHEARS));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Shears");
+                        p.sendMessage("§6Purchased Shears");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase shears!");
+                        p.sendMessage("§cYou do not have enough iron to purchase shears!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -341,9 +346,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.getInventory().addItem(new ItemStack(Material.WOODEN_AXE));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Wooden Axe");
+                        p.sendMessage("§6Purchased Wooden Axe");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase a wooden axe!");
+                        p.sendMessage("§cYou do not have enough iron to purchase a wooden axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -357,9 +362,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem((new ItemStack(Material.WOODEN_AXE)));
                         p.getInventory().addItem(iAxe);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Iron Axe");
+                        p.sendMessage("§6Purchased Iron Axe");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase an iron axe!");
+                        p.sendMessage("§cYou do not have enough iron to purchase an iron axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -377,9 +382,9 @@ public class menuHandler implements Listener {
                         p.getInventory().removeItem(iAxe);
                         p.getInventory().addItem(dAxe);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Diamond Axe");
+                        p.sendMessage("§6Purchased Diamond Axe");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase a diamond axe!");
+                        p.sendMessage("§cYou do not have enough gold to purchase a diamond axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -391,78 +396,80 @@ public class menuHandler implements Listener {
     public void onBlocksClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Blocks")) {
+        if (e.getView().getTitle().equalsIgnoreCase("§6Blocks")) {
             if (e.getCurrentItem() == null){
                 return;
             }
-            switch (e.getCurrentItem().getType()) {
-                case SPECTRAL_ARROW:
+            switch (e.getSlot()) {
+                case 27:
                     p.closeInventory();
                     shop.openItemShop(p);
                     break;
-                case WHITE_WOOL:
+                case 10:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 4)) {
-                        p.getInventory().addItem(new ItemStack(Material.WHITE_WOOL, 16));
+                        Material woolColour = team.containsKey(p) ? Material.getMaterial(team.get(p).toUpperCase() + "_WOOL") : Material.WHITE_WOOL;
+
+                        p.getInventory().addItem(new ItemStack(woolColour, 16));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Wool");
+                        p.sendMessage("§6Purchased Wool");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase wool!");
+                        p.sendMessage("§cYou do not have enough iron to purchase wool!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
-                case OAK_PLANKS:
+                case 12:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 4)) {
                         p.getInventory().addItem(new ItemStack(Material.OAK_PLANKS, 16));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Wood");
+                        p.sendMessage("§6Purchased Wood");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase wood!");
+                        p.sendMessage("§cYou do not have enough gold to purchase wood!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
-                case TINTED_GLASS:
+                case 14:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 12)) {
                         p.getInventory().addItem(new ItemStack(Material.TINTED_GLASS, 4));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 12));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Blast Proof Glass");
+                        p.sendMessage("§6Purchased Blast Proof Glass");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase blast proof glass!");
+                        p.sendMessage("§cYou do not have enough iron to purchase blast proof glass!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
-                case TERRACOTTA:
+                case 16:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 8)) {
                         p.getInventory().addItem(new ItemStack(Material.TERRACOTTA, 4));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 8));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Clay");
+                        p.sendMessage("§6Purchased Clay");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase clay!");
+                        p.sendMessage("§cYou do not have enough iron to purchase clay!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
-                case END_STONE:
+                case 22:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 24)) {
                         p.getInventory().addItem(new ItemStack(Material.END_STONE, 12));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 24));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Endstone");
+                        p.sendMessage("§6Purchased Endstone");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase endstone!");
+                        p.sendMessage("§cYou do not have enough iron to purchase endstone!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
-                case OBSIDIAN:
+                case 24:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 4)) {
                         p.getInventory().addItem(new ItemStack(Material.OBSIDIAN, 4));
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Obsidian");
+                        p.sendMessage("§6Purchased Obsidian");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase obsidian!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase obsidian!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
             }
@@ -474,7 +481,7 @@ public class menuHandler implements Listener {
     public void onPotionsClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Potions")) {
+        if (e.getView().getTitle().equalsIgnoreCase("§6Potions")) {
             switch (e.getSlot()) {
                 case 27:
                     p.closeInventory();
@@ -484,16 +491,16 @@ public class menuHandler implements Listener {
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1)) {
                         ItemStack speed = new ItemStack(Material.POTION);
                         PotionMeta speed_meta = (PotionMeta) speed.getItemMeta();
-                        speed_meta.setDisplayName(ChatColor.AQUA + "Speed Potion");
+                        speed_meta.setDisplayName("§bSpeed Potion");
                         speed_meta.setColor(Color.AQUA);
                         speed_meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 900, 4), true);
                         speed.setItemMeta(speed_meta);
                         p.getInventory().addItem(speed);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 1));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Speed Potion");
+                        p.sendMessage("§6Purchased Speed Potion");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase speed potion!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase speed potion!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -501,16 +508,16 @@ public class menuHandler implements Listener {
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1)) {
                         ItemStack jump = new ItemStack(Material.POTION);
                         PotionMeta jump_meta = (PotionMeta) jump.getItemMeta();
-                        jump_meta.setDisplayName(ChatColor.GREEN + "Jump Boost Potion");
+                        jump_meta.setDisplayName("§aJump Boost Potion");
                         jump_meta.setColor(Color.LIME);
                         jump_meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 900, 4), true);
                         jump.setItemMeta(jump_meta);
                         p.getInventory().addItem(jump);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 1));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Jump Boost Potion");
+                        p.sendMessage("§6Purchased Jump Boost Potion");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase jump boost potion!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase jump boost potion!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -518,16 +525,16 @@ public class menuHandler implements Listener {
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2)) {
                         ItemStack invis = new ItemStack(Material.POTION);
                         PotionMeta invis_meta = (PotionMeta) invis.getItemMeta();
-                        invis_meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Invisibility Potion");
+                        invis_meta.setDisplayName("§dInvisibility Potion");
                         invis_meta.setColor(Color.PURPLE);
                         invis_meta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 4), true);
                         invis.setItemMeta(invis_meta);
                         p.getInventory().addItem(invis);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 2));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Invisibility Potion");
+                        p.sendMessage("§6Purchased Invisibility Potion");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase invisibility potion!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase invisibility potion!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -540,7 +547,7 @@ public class menuHandler implements Listener {
     public void onSpecialClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.GOLD + "Special Items")) {
+        if (e.getView().getTitle().equalsIgnoreCase("§6Special Items")) {
             if (e.getCurrentItem() == null){
                 return;
             }
@@ -553,17 +560,17 @@ public class menuHandler implements Listener {
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 40)) {
                         ItemStack fireball = new ItemStack(Material.FIRE_CHARGE);
                         ItemMeta fireball_meta = fireball.getItemMeta();
-                        fireball_meta.setDisplayName(ChatColor.RED + "Fireball");
+                        fireball_meta.setDisplayName("§cFireball");
                         ArrayList<String> fireball_lore = new ArrayList<>();
-                        fireball_lore.add(ChatColor.GOLD + "Throwable Fireball");
+                        fireball_lore.add("§6Throwable Fireball");
                         fireball_meta.setLore(fireball_lore);
                         fireball.setItemMeta(fireball_meta);
                         p.getInventory().addItem(fireball);
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 40));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Fireball");
+                        p.sendMessage("§6Purchased Fireball");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase fireball!");
+                        p.sendMessage("§cYou do not have enough iron to purchase fireball!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -572,9 +579,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.IRON_GOLEM_SPAWN_EGG));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 120));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Iron Golem");
+                        p.sendMessage("§6Purchased Iron Golem");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough iron to purchase iron golem!");
+                        p.sendMessage("§cYou do not have enough iron to purchase iron golem!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -583,9 +590,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.TNT));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Tnt");
+                        p.sendMessage("§6Purchased Tnt");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase tnt!");
+                        p.sendMessage("§cYou do not have enough gold to purchase tnt!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -594,9 +601,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 3));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased Golden Apple");
+                        p.sendMessage("§6Purchased Golden Apple");
                     } else {
-                        p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase golden apple!");
+                        p.sendMessage("§cYou do not have enough gold to purchase golden apple!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
@@ -605,9 +612,9 @@ public class menuHandler implements Listener {
                     p.getInventory().addItem(new ItemStack(Material.WATER_BUCKET));
                     p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 6));
                     p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                    p.sendMessage(ChatColor.GOLD + "Purchased Water Bucket");
+                    p.sendMessage("§6Purchased Water Bucket");
                 } else {
-                    p.sendMessage(ChatColor.RED + "You do not have enough gold to purchase water bucket!");
+                    p.sendMessage("§cYou do not have enough gold to purchase water bucket!");
                     p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                 }
                 break;
@@ -616,9 +623,9 @@ public class menuHandler implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                        p.sendMessage(ChatColor.GOLD + "Purchased EnderPearl");
+                        p.sendMessage("§6Purchased EnderPearl");
                     }else{
-                        p.sendMessage(ChatColor.RED + "You do not have enough emeralds to purchase ender pearl!");
+                        p.sendMessage("§cYou do not have enough emeralds to purchase ender pearl!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;

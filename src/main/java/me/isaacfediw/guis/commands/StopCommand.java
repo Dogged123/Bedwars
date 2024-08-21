@@ -1,9 +1,8 @@
 package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.events.gameLogicEvents;
-import me.isaacfediw.guis.events.blockBreakControl;
-import org.bukkit.ChatColor;
+import me.isaacfediw.guis.events.GameEvents;
+import me.isaacfediw.guis.events.BlockEvents;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -11,10 +10,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class bedwarsStop implements CommandExecutor {
+public class StopCommand implements CommandExecutor {
 
     GUIs plugin;
-    public bedwarsStop(GUIs p){
+    public StopCommand(GUIs p){
         plugin = p;
     }
 
@@ -23,7 +22,7 @@ public class bedwarsStop implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (!p.hasPermission("GUIs.stopgame")) {
-                p.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+                p.sendMessage("§cYou do not have permission to run this command");
                 return true;
             }
             stopGame();
@@ -32,12 +31,12 @@ public class bedwarsStop implements CommandExecutor {
     }
 
     public void stopGame() {
-        gameLogicEvents gam = new gameLogicEvents(plugin);
+        GameEvents gam = new GameEvents(plugin);
 
-        for (Block block : blockBreakControl.breakableBlocks) {
+        for (Block block : BlockEvents.breakableBlocks) {
             block.setType(Material.AIR);
         }
-        blockBreakControl.breakableBlocks.clear();
+        BlockEvents.breakableBlocks.clear();
 
         GUIs.stopGame();
         gam.stop();

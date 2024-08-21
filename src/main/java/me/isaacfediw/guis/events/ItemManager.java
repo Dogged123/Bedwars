@@ -1,8 +1,8 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.commands.Vanish;
-import org.bukkit.ChatColor;
+import me.isaacfediw.guis.commands.VanishCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -12,34 +12,33 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
+import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
-public class itemManager implements Listener {
+public class ItemManager implements Listener {
 
     GUIs plugin;
-    private int length;
     private int vanishLength;
-    public itemManager(GUIs plugin){
+
+    public ItemManager(GUIs plugin){
         this.plugin = plugin;
     }
+
     @EventHandler
-    public void onPotionDrink(PlayerItemConsumeEvent e){
+    public void onPotionDrink(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
-        if (!queuedPlayers.contains(p)){
-            return;
-        }
-        length = 2;
-        if (p.getItemInUse().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.LIGHT_PURPLE + "Invisibility Potion")){
+        if (!queuedPlayers.contains(p)) return;
+
+        if (p.getItemInUse().getItemMeta().getDisplayName().equalsIgnoreCase("§dInvisibility Potion")){
             vanishLength = 30;
-            Vanish v = new Vanish(plugin);
+            VanishCommand v = new VanishCommand(plugin);
             v.vanishPlayer(p);
+
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -51,18 +50,12 @@ public class itemManager implements Listener {
                 }
             }.runTaskTimer(plugin, 0, 20);
         }
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (length <= 0){
-                    cancel();
-                }
-                if(p.getInventory().contains(Material.GLASS_BOTTLE)){
-                    p.getInventory().remove(Material.GLASS_BOTTLE);
-                }
-                length --;
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (p.getInventory().contains(Material.GLASS_BOTTLE)){
+                p.getInventory().remove(Material.GLASS_BOTTLE);
             }
-        }.runTaskTimer(plugin, 0, 20);
+        }, 2);
     }
 
     @EventHandler

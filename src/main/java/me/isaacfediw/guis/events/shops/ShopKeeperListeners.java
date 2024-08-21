@@ -1,8 +1,7 @@
 package me.isaacfediw.guis.events.shops;
 
-import me.isaacfediw.guis.commands.shopCommand;
-import me.isaacfediw.guis.commands.upgradeShopCommand;
-import org.bukkit.Bukkit;
+import me.isaacfediw.guis.commands.ItemShopCommand;
+import me.isaacfediw.guis.commands.UpgradeShopCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
@@ -12,28 +11,28 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 
-public class villagerCommandExecutor implements Listener{
+public class ShopKeeperListeners implements Listener {
 
     @EventHandler
-    public void onVillagerClick(PlayerInteractEntityEvent e){
+    public void onVillagerClick(PlayerInteractEntityEvent e) {
         Entity entity = e.getRightClicked();
         if(!(entity instanceof NPC)){
             return;
         }
 
-        shopCommand shop = new shopCommand();
+        ItemShopCommand shop = new ItemShopCommand();
         Player p = e.getPlayer();
         shop.openItemShop(p);
     }
 
     @EventHandler
-    public void onVindicatorClick(PlayerInteractEntityEvent e){
+    public void onVindicatorClick(PlayerInteractEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if(!(entity instanceof Vindicator)){
+        if (!(entity instanceof Vindicator)) {
             return;
         }
 
-        upgradeShopCommand shop = new upgradeShopCommand();
+        UpgradeShopCommand shop = new UpgradeShopCommand();
         Player p = e.getPlayer();
         shop.openUpgradesShop(p);
 

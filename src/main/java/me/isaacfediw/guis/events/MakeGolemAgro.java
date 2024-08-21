@@ -1,13 +1,9 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Golem;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +17,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
+import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
+import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class MakeGolemAgro implements Listener {
 
@@ -52,10 +49,8 @@ public class MakeGolemAgro implements Listener {
                             cancel();
                         }
                         for (Player player : queuedPlayers) {
-                            PersistentDataContainer container = player.getPersistentDataContainer();
-                            PersistentDataContainer container2 = playerGolems.get(golem).getPersistentDataContainer();
-                            NamespacedKey team = new NamespacedKey(plugin, "Team");
-                            if (!(container.get(team, PersistentDataType.STRING).equals(container2.get(team, PersistentDataType.STRING))) && player.getLocation().distance(golem.getLocation()) <= 20) {
+
+                            if (!(team.get(p).equals(team.get(playerGolems.get(golem)))) && player.getLocation().distance(golem.getLocation()) <= 20) {
                                 golem.setTarget(player);
                             }
                         }
@@ -72,10 +67,8 @@ public class MakeGolemAgro implements Listener {
             Player p = (Player) e.getDamager();
             if (e.getEntity() instanceof IronGolem) {
                 IronGolem golem = (IronGolem) e.getEntity();
-                PersistentDataContainer container = p.getPersistentDataContainer();
-                PersistentDataContainer container2 = playerGolems.get(golem).getPersistentDataContainer();
-                NamespacedKey team = new NamespacedKey(plugin, "Team");
-                if (container.get(team, PersistentDataType.STRING).equals(container2.get(team, PersistentDataType.STRING))){
+
+                if (team.get(p).equals(team.get(playerGolems.get(golem)))) {
                     e.setCancelled(true);
                 }
             }

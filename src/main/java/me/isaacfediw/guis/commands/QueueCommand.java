@@ -1,7 +1,7 @@
 package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.events.gameLogicEvents;
+import me.isaacfediw.guis.events.GameEvents;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,20 +10,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.RenderType;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
-import static me.isaacfediw.guis.events.gameLogicEvents.aliveTeams;
-import static me.isaacfediw.guis.events.gameLogicEvents.teams;
+import java.util.HashMap;
+import java.util.Map;
 
-public class queue implements CommandExecutor {
+import static me.isaacfediw.guis.events.GameEvents.aliveTeams;
+import static me.isaacfediw.guis.events.GameEvents.teams;
+
+public class QueueCommand implements CommandExecutor {
     public static ArrayList<Player> queuedPlayers = new ArrayList<>();
+    public static Map<Player, String> lifeStatus = new HashMap<>();
+    public static Map<Player, String> team = new HashMap<>();
+
     private int timeLeft;
     GUIs plugin;
 
-    public queue(GUIs plugin){
+    public QueueCommand(GUIs plugin){
         this.plugin = plugin;
     }
 
@@ -32,25 +35,27 @@ public class queue implements CommandExecutor {
 
         if (sender instanceof Player) {
             Player p = (Player) sender;
+
             PersistentDataContainer container = p.getPersistentDataContainer();
-            NamespacedKey teamName = new NamespacedKey(plugin, "Team");
-            NamespacedKey lifeStatus = new NamespacedKey(plugin, "Life_Status");
             NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
             NamespacedKey prot = new NamespacedKey(plugin, "prot");
             NamespacedKey haste = new NamespacedKey(plugin, "haste");
 
+            if (!lifeStatus.containsKey(p)) lifeStatus.put(p, "N/A");
+            if (!team.containsKey(p)) team.put(p, "N/A");
+
             if (queuedPlayers.contains(p) && args.length >= 1) {
-                if (!container.get(lifeStatus, PersistentDataType.STRING).equals("In_Queue")) {
-                    p.sendMessage(ChatColor.RED + "You cannot leave the queue while in the game!");
+                if (!lifeStatus.get(p).equals("In_Queue")) {
+                    p.sendMessage("§cYou cannot leave the queue while in the game!");
                     return true;
                 }
 
                 queuedPlayers.remove(p);
-                p.setPlayerListName(ChatColor.WHITE + p.getName());
+                p.setPlayerListName("§f" + p.getName());
                 p.getInventory().clear();
-                p.sendMessage(ChatColor.GREEN + "You left the queue!");
+                p.sendMessage("§aYou left the queue!");
 
-                switch (container.get(teamName, PersistentDataType.STRING)) {
+                switch (team.get(p)) {
                     case "Red":
                         teams.get(0).remove(p.getName());
                         break;
@@ -64,21 +69,22 @@ public class queue implements CommandExecutor {
                         teams.get(3).remove(p.getName());
                         break;
                 }
-                container.set(teamName, PersistentDataType.STRING, "None");
-                container.set(lifeStatus, PersistentDataType.STRING, "N/A");
+
+                lifeStatus.replace(p, "N/A");
+                team.replace(p, "N/A");
                 container.set(sharp, PersistentDataType.STRING, "N/A");
                 container.set(prot, PersistentDataType.STRING, "N/A");
                 container.set(haste, PersistentDataType.STRING, "N/A");
                 p.setLevel(0);
 
-                if (queuedPlayers.size() == 0){
+                if (queuedPlayers.isEmpty()) {
                     timeLeft = 20;
                 }
                 return true;
             }
 
-            if (args.length == 0 && queuedPlayers.contains(p)){
-                p.sendMessage(ChatColor.RED + "You are already in the queue! Leave with /queue leave!");
+            if (args.length == 0 && queuedPlayers.contains(p)) {
+                p.sendMessage("§cYou are already in the queue! Leave with /queue leave!");
                 return true;
             }
 
@@ -88,68 +94,69 @@ public class queue implements CommandExecutor {
                 sender.sendMessage("Please specify a player to add to the queue");
                 return true;
             }
-            if (Bukkit.getPlayer(args[0]) != null) {
-                queueProcedures(Bukkit.getPlayer(args[0]));
+
+            Player p = Bukkit.getPlayer(args[0]);
+            if (p != null) {
+                queueProcedures(p);
             } else {
-                sender.sendMessage("This player is not online");
+                sender.sendMessage("Player is not online");
             }
         }
         return true;
     }
 
     public void queueProcedures(Player p) {
-        gameLogicEvents gam = new gameLogicEvents(plugin);
-        teamAdder teamAdding = new teamAdder(plugin);
-        int team = (int) (Math.random() * 4);
+        GameEvents gam = new GameEvents(plugin);
+        TeamAdder teamAdding = new TeamAdder(plugin);
+        int teamNum = (int) (Math.random() * 4);
 
         PersistentDataContainer container = p.getPersistentDataContainer();
-        NamespacedKey teamName = new NamespacedKey(plugin, "Team");
-        NamespacedKey lifeStatus = new NamespacedKey(plugin, "Life_Status");
         NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
         NamespacedKey prot = new NamespacedKey(plugin, "prot");
         NamespacedKey haste = new NamespacedKey(plugin, "haste");
 
-        if (plugin.getConfig().get("Que") == null){
-            p.sendMessage(ChatColor.RED + "The que is not set up!");
+        if (plugin.getConfig().get("Que") == null) {
+            p.sendMessage("§cThe que is not set up!");
             return;
         }
-        if (plugin.getConfig().get("Red") == null){
-            p.sendMessage(ChatColor.RED + "Red base is not set up!");
+        if (plugin.getConfig().get("Red") == null) {
+            p.sendMessage("§cRed base is not set up!");
             return;
         }
-        if (plugin.getConfig().get("Blue") == null){
-            p.sendMessage(ChatColor.RED + "Blue base is not set up!");
+        if (plugin.getConfig().get("Blue") == null) {
+            p.sendMessage("§cBlue base is not set up!");
             return;
         }
-        if (plugin.getConfig().get("Yellow") == null){
-            p.sendMessage(ChatColor.RED + "Yellow base is not set up!");
+        if (plugin.getConfig().get("Yellow") == null) {
+            p.sendMessage("§cYellow base is not set up!");
             return;
         }
-        if (plugin.getConfig().get("Black") == null){
-            p.sendMessage(ChatColor.RED + "Black base is not set up!");
+        if (plugin.getConfig().get("Black") == null) {
+            p.sendMessage("§cBlack base is not set up!");
             return;
         }
-        p.sendMessage(ChatColor.GREEN + "You joined the queue!");
+        p.sendMessage("§aYou joined the queue!");
         p.getInventory().clear();
 
-        teamAdding.addToTeam(p, team);
+        teamAdding.addToTeam(p, teamNum);
 
-        if (teams.get(team).size() - 1 == 0) {
+        if (teams.get(teamNum).size() - 1 == 0) {
             aliveTeams ++;
         }
 
         queuedPlayers.add(p);
 
-        if (team == 0){
-            container.set(teamName, PersistentDataType.STRING, "Red");
-        }else if (team == 1){
-            container.set(teamName, PersistentDataType.STRING, "Yellow");
-        }else if (team == 2){
-            container.set(teamName, PersistentDataType.STRING, "Blue");
-        }else if (team == 3){
-            container.set(teamName, PersistentDataType.STRING, "Black");
+        if (teamNum == 0) {
+            team.replace(p, "Red");
+        }else if (teamNum == 1) {
+            team.replace(p, "Yellow");
+        }else if (teamNum == 2) {
+            team.replace(p, "Blue");
+        }else if (teamNum == 3) {
+            team.replace(p, "Black");
         }
-        container.set(lifeStatus, PersistentDataType.STRING, "In_Queue");
+
+        lifeStatus.replace(p, "In_Queue");
         container.set(sharp, PersistentDataType.STRING, "None");
         container.set(prot, PersistentDataType.STRING, "None");
         container.set(haste, PersistentDataType.STRING, "None");
@@ -170,9 +177,9 @@ public class queue implements CommandExecutor {
                         cancel();
                     }
 
-                    if (timeLeft <= 5){
+                    if (timeLeft <= 5) {
                         for (Player queuedPlayer : queuedPlayers) {
-                            queuedPlayer.sendMessage(ChatColor.GREEN + "" + timeLeft + " seconds remaining!");
+                            queuedPlayer.sendMessage("§a" + timeLeft + " seconds remaining!");
                         }
                     }
 
@@ -181,10 +188,10 @@ public class queue implements CommandExecutor {
                     }
                     timeLeft --;
 
-                    if (timeLeft == 0){
+                    if (timeLeft == 0) {
                         for (Player queuedPlayer : queuedPlayers) {
                             queuedPlayer.setLevel(timeLeft);
-                            queuedPlayer.sendMessage(ChatColor.GREEN + "Game Started!");
+                            queuedPlayer.sendMessage("§aGame Started!");
                         }
                         gam.startGame();
                         cancel();

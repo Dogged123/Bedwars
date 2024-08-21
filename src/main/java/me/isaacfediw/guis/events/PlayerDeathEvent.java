@@ -1,13 +1,13 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.commands.openScoreboard;
+import me.isaacfediw.guis.commands.OpenScoreboard;
+import me.isaacfediw.guis.commands.StopCommand;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,24 +16,27 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
+import java.util.List;
 
-public class onPlayerDeath implements Listener {
+import static me.isaacfediw.guis.commands.QueueCommand.*;
+import static me.isaacfediw.guis.events.GameEvents.aliveTeams;
+import static me.isaacfediw.guis.events.GameEvents.teams;
+
+public class PlayerDeathEvent implements Listener {
 
     private final ArrayList<ItemStack> playerInventory = new ArrayList<>();
     private boolean hasPick;
     private boolean hasAxe;
     GUIs plugin;
 
-    public onPlayerDeath(GUIs p){
+    public PlayerDeathEvent(GUIs p){
         plugin = p;
     }
+
     @EventHandler
-    public void playerDeath(PlayerDeathEvent e) {
+    public void playerDeath(org.bukkit.event.entity.PlayerDeathEvent e) {
         Player p = e.getEntity();
         PersistentDataContainer container = p.getPersistentDataContainer();
-        NamespacedKey teamName = new NamespacedKey(plugin, "Team");
-        NamespacedKey lifeStatus = new NamespacedKey(plugin, "Life_Status");
         NamespacedKey prot = new NamespacedKey(plugin, "prot");
 
         if (!queuedPlayers.contains(p)){
@@ -52,32 +55,45 @@ public class onPlayerDeath implements Listener {
             }
         }
 
-        if (container.get(lifeStatus, PersistentDataType.STRING).equals("Bed_Broken") || container.get(lifeStatus, PersistentDataType.STRING).equals("Dead")){
-            container.set(lifeStatus, PersistentDataType.STRING, "Dead");
-            openScoreboard sb = new openScoreboard();
-            if (container.get(teamName, PersistentDataType.STRING).equals("Red")){
-                openScoreboard.redStatus = ("✖");
-            }else if (container.get(teamName, PersistentDataType.STRING).equals("Yellow")){
-                openScoreboard.yellowStatus = ("✖");
-            }else if (container.get(teamName, PersistentDataType.STRING).equals("Blue")){
-                openScoreboard.blueStatus = ("✖");
-            }else if (container.get(teamName, PersistentDataType.STRING).equals("Black")){
-                openScoreboard.blackStatus = ("✖");
+        if (lifeStatus.get(p).equals("Bed_Broken") || lifeStatus.get(p).equals("Dead")) {
+            lifeStatus.replace(p, "Dead");
+
+            for (List<String> team : teams) {
+                team.remove(p.getName());
+                if (team.isEmpty()) aliveTeams--;
             }
-            for (Player player : queuedPlayers){
+
+            if (aliveTeams == 1) {
+                StopCommand stop = new StopCommand(plugin);
+                stop.stopGame();
+            }
+            p.sendMessage("§cEliminated!");
+            p.setGameMode(GameMode.SPECTATOR);
+
+            OpenScoreboard sb = new OpenScoreboard();
+            if (team.get(p).equals("Red")) {
+                OpenScoreboard.redStatus = ("✖");
+            }else if (team.get(p).equals("Yellow")) {
+                OpenScoreboard.yellowStatus = ("✖");
+            }else if (team.get(p).equals("Blue")) {
+                OpenScoreboard.blueStatus = ("✖");
+            }else if (team.get(p).equals("Black")) {
+                OpenScoreboard.blackStatus = ("✖");
+            }
+
+            for (Player player : queuedPlayers) {
                 sb.setInitialScoreboard(player);
             }
-            if (p.getLocation().getY() <= 0 && p.getKiller() != null){
-                e.setDeathMessage(ChatColor.RED + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". " + ChatColor.RED + ChatColor.BOLD + "FINAL KILL!");
-            }else if (p.getLocation().getY() <= 0) {
-                e.setDeathMessage(ChatColor.RED + p.getName() + " fell into the void. " + ChatColor.RED + ChatColor.BOLD + "FINAL KILL!");
+
+            if (p.getLocation().getY() <= 0 && p.getKiller() != null) {
+                e.setDeathMessage("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". §c§lFINAL KILL!");
+            } else if (p.getLocation().getY() <= 0) {
+                e.setDeathMessage("§c" + p.getName() + " fell into the void. §c§lFINAL KILL!");
+            } else if (p.getKiller() != null) {
+                e.setDeathMessage("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName() + ". §c§lFINAL KILL!");
+            } else {
+                e.setDeathMessage("§c" + p.getName() + " was killed by Covid 19. §c§lFINAL KILL!");
             }
-            else if (p.getKiller() != null){
-                e.setDeathMessage(ChatColor.RED + p.getName() + " was lethally slapped by " + p.getKiller().getName() + ". " + ChatColor.RED + ChatColor.BOLD + "FINAL KILL!");
-            }else{
-                e.setDeathMessage(ChatColor.RED + p.getName() + " was killed by Covid 19. " + ChatColor.RED + ChatColor.BOLD + "FINAL KILL!");
-            }
-            p.setGameMode(GameMode.SPECTATOR);
             return;
         }
 
@@ -85,15 +101,14 @@ public class onPlayerDeath implements Listener {
         hasPick = false;
         playerInventory.clear();
 
-        if (p.getLocation().getY() <= 0 && p.getKiller() != null){
-            e.setDeathMessage(ChatColor.RED + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". ");
-        }else if (p.getLocation().getY() <= 0) {
-            e.setDeathMessage(ChatColor.RED + p.getName() + " fell into the void.");
-        }
-        else if (p.getKiller() != null){
-            e.setDeathMessage(ChatColor.RED + p.getName() + " was lethally slapped by " + p.getKiller().getName());
-        }else{
-            e.setDeathMessage(ChatColor.RED + p.getName() + " was killed by Covid 19");
+        if (p.getLocation().getY() <= 0 && p.getKiller() != null) {
+            e.setDeathMessage("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". ");
+        } else if (p.getLocation().getY() <= 0) {
+            e.setDeathMessage("§c" + p.getName() + " fell into the void.");
+        } else if (p.getKiller() != null) {
+            e.setDeathMessage("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName());
+        } else {
+            e.setDeathMessage("§c" + p.getName() + " was killed by Covid 19");
         }
 
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
@@ -154,18 +169,18 @@ public class onPlayerDeath implements Listener {
         ItemStack diamondBoots = new ItemStack(Material.DIAMOND_BOOTS);
         ItemMeta diamondBootsMeta = diamondBoots.getItemMeta();
         diamondBootsMeta.setUnbreakable(true);
-        if (container.get(prot, PersistentDataType.STRING).equals("one")){
+        if (container.get(prot, PersistentDataType.STRING).equals("one")) {
             diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("two")){
+        }else if (container.get(prot, PersistentDataType.STRING).equals("two")) {
             diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("three")){
+        }else if (container.get(prot, PersistentDataType.STRING).equals("three")) {
             diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 3, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("four")){
+        }else if (container.get(prot, PersistentDataType.STRING).equals("four")) {
             diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
         }
         diamondBoots.setItemMeta(diamondBootsMeta);
 
-        if (container.get(teamName, PersistentDataType.STRING).equals("Red")){
+        if (team.get(p).equals("Red")){
             helmMeta1.setColor(Color.RED);
             chestMeta1.setColor(Color.RED);
             legMeta1.setColor(Color.RED);
@@ -174,7 +189,7 @@ public class onPlayerDeath implements Listener {
             chestplate.setItemMeta(chestMeta1);
             leggings.setItemMeta(legMeta1);
             boots.setItemMeta(bootMeta1);
-        } else if (container.get(teamName, PersistentDataType.STRING).equals("Yellow")) {
+        } else if (team.get(p).equals("Yellow")) {
             helmMeta1.setColor(Color.YELLOW);
             chestMeta1.setColor(Color.YELLOW);
             legMeta1.setColor(Color.YELLOW);
@@ -183,7 +198,7 @@ public class onPlayerDeath implements Listener {
             chestplate.setItemMeta(chestMeta1);
             leggings.setItemMeta(legMeta1);
             boots.setItemMeta(bootMeta1);
-        } else if (container.get(teamName, PersistentDataType.STRING).equals("Blue")) {
+        } else if (team.get(p).equals("Blue")) {
             helmMeta1.setColor(Color.BLUE);
             chestMeta1.setColor(Color.BLUE);
             legMeta1.setColor(Color.BLUE);
@@ -192,7 +207,7 @@ public class onPlayerDeath implements Listener {
             chestplate.setItemMeta(chestMeta1);
             leggings.setItemMeta(legMeta1);
             boots.setItemMeta(bootMeta1);
-        } else if (container.get(teamName, PersistentDataType.STRING).equals("Black")) {
+        } else if (team.get(p).equals("Black")) {
             helmMeta1.setColor(Color.BLACK);
             chestMeta1.setColor(Color.BLACK);
             legMeta1.setColor(Color.BLACK);
@@ -202,6 +217,7 @@ public class onPlayerDeath implements Listener {
             leggings.setItemMeta(legMeta1);
             boots.setItemMeta(bootMeta1);
         }
+
         if (container.get(prot, PersistentDataType.STRING).equals("one")){
             helmMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
             chestMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
@@ -239,6 +255,7 @@ public class onPlayerDeath implements Listener {
             leggings.setItemMeta(legMeta);
             boots.setItemMeta(bootMeta);
         }
+
         if (p.getInventory().getLeggings().equals(ironLegs)){
             playerInventory.add(helmet);
             playerInventory.add(chestplate);
@@ -284,14 +301,15 @@ public class onPlayerDeath implements Listener {
     }
 
     @EventHandler
-    public void playerRespawn(PlayerRespawnEvent e){
+    public void playerRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
-        if (!queuedPlayers.contains(p)){
+        PersistentDataContainer container = p.getPersistentDataContainer();
+
+        if (!queuedPlayers.contains(p)) {
             return;
         }
-        PersistentDataContainer container = p.getPersistentDataContainer();
-        NamespacedKey lifeStatus = new NamespacedKey(plugin, "Life_Status");
-        if (container.get(lifeStatus, PersistentDataType.STRING).equals("Dead")){
+
+        if (lifeStatus.get(p).equals("Bed_Broken") || lifeStatus.get(p).equals("Dead")) {
             return;
         }
 
@@ -300,26 +318,25 @@ public class onPlayerDeath implements Listener {
         p.teleport(queLoc);
         p.setGameMode(GameMode.SPECTATOR);
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             Integer deathTimeLeft = 5;
             @Override
-            public void run(){
+            public void run() {
                 if (deathTimeLeft == 0) {
                     NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
-                    NamespacedKey team = new NamespacedKey(plugin, "Team");
 
                     Location redLoc = plugin.getConfig().getLocation("Red");
                     Location yellowLoc = plugin.getConfig().getLocation("Yellow");
                     Location blueLoc = plugin.getConfig().getLocation("Blue");
                     Location blackLoc = plugin.getConfig().getLocation("Black");
 
-                    if (container.get(team, PersistentDataType.STRING).equals("Red")){
+                    if (team.get(p).equals("Red")) {
                         p.teleport(redLoc);
-                    }else if (container.get(team, PersistentDataType.STRING).equals("Yellow")){
+                    }else if (team.get(p).equals("Yellow")){
                         p.teleport(yellowLoc);
-                    }else if (container.get(team, PersistentDataType.STRING).equals("Blue")){
+                    }else if (team.get(p).equals("Blue")){
                         p.teleport(blueLoc);
-                    }else if (container.get(team, PersistentDataType.STRING).equals("Black")){
+                    }else if (team.get(p).equals("Black")){
                         p.teleport(blackLoc);
                     }
                     p.setGameMode(GameMode.SURVIVAL);
@@ -352,11 +369,11 @@ public class onPlayerDeath implements Listener {
                     if (playerInventory.contains(new ItemStack(Material.SHEARS))){
                         p.getInventory().addItem(new ItemStack(Material.SHEARS));
                     }
-                    p.sendTitle(ChatColor.GREEN + "Respawned!", "", 5, 20, 5);
+                    p.sendTitle("§aRespawned!", "", 5, 20, 5);
                     cancel();
                     return;
                 }
-                p.sendTitle(ChatColor.RED + "You died!", ChatColor.RED + deathTimeLeft.toString(), 0, 20, 0);
+                p.sendTitle("§cYou died!", "§c" + deathTimeLeft.toString(), 0, 20, 0);
                 p.playSound(p, Sound.BLOCK_NOTE_BLOCK_HAT,10, 1);
                 deathTimeLeft --;
             }

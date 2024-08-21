@@ -11,8 +11,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import static me.isaacfediw.guis.commands.queue.queuedPlayers;
-
 public class HasteOnMove implements Listener {
 
     GUIs plugin;

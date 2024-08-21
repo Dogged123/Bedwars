@@ -1,7 +1,6 @@
 package me.isaacfediw.guis.events;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class UseWand implements Listener {
+public class WandListener implements Listener {
     @EventHandler
     public void wandClick(PlayerInteractEvent e) {
         Player p = e.getPlayer();
@@ -21,72 +20,72 @@ public class UseWand implements Listener {
             if (p.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
                 return;
             }
-            if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bedwars Map Wand")){
+            if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§e§lBedwars Map Wand")){
                 Inventory addBase = Bukkit.createInventory(p, 18, "AddBase");
 
                 ItemStack base1 = new ItemStack(Material.RED_WOOL);
                 ItemMeta base1Meta = base1.getItemMeta();
-                base1Meta.setDisplayName(ChatColor.RED + "Red");
+                base1Meta.setDisplayName("§cRed");
                 base1.setItemMeta(base1Meta);
 
                 ItemStack base2 = new ItemStack(Material.BLUE_WOOL);
                 ItemMeta base2Meta = base2.getItemMeta();
-                base2Meta.setDisplayName(ChatColor.BLUE + "Blue");
+                base2Meta.setDisplayName("§1Blue");
                 base2.setItemMeta(base2Meta);
 
                 ItemStack base3 = new ItemStack(Material.YELLOW_WOOL);
                 ItemMeta base3Meta = base3.getItemMeta();
-                base3Meta.setDisplayName(ChatColor.YELLOW + "Yellow");
+                base3Meta.setDisplayName("§eYellow");
                 base3.setItemMeta(base3Meta);
 
                 ItemStack base4 = new ItemStack(Material.BLACK_WOOL);
                 ItemMeta base4Meta = base4.getItemMeta();
-                base4Meta.setDisplayName(ChatColor.BLACK + "Black");
+                base4Meta.setDisplayName("§0Black");
                 base4.setItemMeta(base4Meta);
 
                 ItemStack diamond1 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond1Meta = diamond1.getItemMeta();
-                diamond1Meta.setDisplayName(ChatColor.AQUA + "Diamond 1");
+                diamond1Meta.setDisplayName("§bDiamond 1");
                 diamond1.setItemMeta(diamond1Meta);
 
                 ItemStack diamond2 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond2Meta = diamond2.getItemMeta();
-                diamond2Meta.setDisplayName(ChatColor.AQUA + "Diamond 2");
+                diamond2Meta.setDisplayName("§bDiamond 2");
                 diamond2.setItemMeta(diamond2Meta);
 
                 ItemStack diamond3 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond3Meta = diamond3.getItemMeta();
-                diamond3Meta.setDisplayName(ChatColor.AQUA + "Diamond 3");
+                diamond3Meta.setDisplayName("§bDiamond 3");
                 diamond3.setItemMeta(diamond3Meta);
 
                 ItemStack diamond4 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond4Meta = diamond4.getItemMeta();
-                diamond4Meta.setDisplayName(ChatColor.AQUA + "Diamond 4");
+                diamond4Meta.setDisplayName("§bDiamond 4");
                 diamond4.setItemMeta(diamond4Meta);
 
                 ItemStack emerald1 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald1Meta = emerald1.getItemMeta();
-                emerald1Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 1");
+                emerald1Meta.setDisplayName("§2Emerald 1");
                 emerald1.setItemMeta(emerald1Meta);
 
                 ItemStack emerald2 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald2Meta = emerald2.getItemMeta();
-                emerald2Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 2");
+                emerald2Meta.setDisplayName("§2Emerald 2");
                 emerald2.setItemMeta(emerald2Meta);
 
                 ItemStack emerald3 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald3Meta = emerald3.getItemMeta();
-                emerald3Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 3");
+                emerald3Meta.setDisplayName("§2Emerald 3");
                 emerald3.setItemMeta(emerald3Meta);
 
                 ItemStack emerald4 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald4Meta = emerald4.getItemMeta();
-                emerald4Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 4");
+                emerald4Meta.setDisplayName("§2Emerald 4");
                 emerald4.setItemMeta(emerald4Meta);
 
                 ItemStack que = new ItemStack(Material.GLASS);
                 ItemMeta queMeta = que.getItemMeta();
-                queMeta.setDisplayName(ChatColor.GOLD + "Que");
+                queMeta.setDisplayName("§6Que");
                 que.setItemMeta(queMeta);
 
                 addBase.setItem(0, base1);
@@ -109,72 +108,72 @@ public class UseWand implements Listener {
             if (p.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
                 return;
             }
-            if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bedwars Map Wand")){
+            if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§e§lBedwars Map Wand")){
                 Inventory delBase = Bukkit.createInventory(p, 18, "DeleteBase");
 
                 ItemStack base1 = new ItemStack(Material.RED_WOOL);
                 ItemMeta base1Meta = base1.getItemMeta();
-                base1Meta.setDisplayName(ChatColor.RED + "Red");
+                base1Meta.setDisplayName("§cRed");
                 base1.setItemMeta(base1Meta);
 
                 ItemStack base2 = new ItemStack(Material.BLUE_WOOL);
                 ItemMeta base2Meta = base2.getItemMeta();
-                base2Meta.setDisplayName(ChatColor.BLUE + "Blue");
+                base2Meta.setDisplayName("§1Blue");
                 base2.setItemMeta(base2Meta);
 
                 ItemStack base3 = new ItemStack(Material.YELLOW_WOOL);
                 ItemMeta base3Meta = base3.getItemMeta();
-                base3Meta.setDisplayName(ChatColor.YELLOW + "Yellow");
+                base3Meta.setDisplayName("§eYellow");
                 base3.setItemMeta(base3Meta);
 
                 ItemStack base4 = new ItemStack(Material.BLACK_WOOL);
                 ItemMeta base4Meta = base4.getItemMeta();
-                base4Meta.setDisplayName(ChatColor.BLACK + "Black");
+                base4Meta.setDisplayName("§0Black");
                 base4.setItemMeta(base4Meta);
 
                 ItemStack diamond1 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond1Meta = diamond1.getItemMeta();
-                diamond1Meta.setDisplayName(ChatColor.AQUA + "Diamond 1");
+                diamond1Meta.setDisplayName("§bDiamond 1");
                 diamond1.setItemMeta(diamond1Meta);
 
                 ItemStack diamond2 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond2Meta = diamond2.getItemMeta();
-                diamond2Meta.setDisplayName(ChatColor.AQUA + "Diamond 2");
+                diamond2Meta.setDisplayName("§bDiamond 2");
                 diamond2.setItemMeta(diamond2Meta);
 
                 ItemStack diamond3 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond3Meta = diamond3.getItemMeta();
-                diamond3Meta.setDisplayName(ChatColor.AQUA + "Diamond 3");
+                diamond3Meta.setDisplayName("§bDiamond 3");
                 diamond3.setItemMeta(diamond3Meta);
 
                 ItemStack diamond4 = new ItemStack(Material.DIAMOND_BLOCK);
                 ItemMeta diamond4Meta = diamond4.getItemMeta();
-                diamond4Meta.setDisplayName(ChatColor.AQUA + "Diamond 4");
+                diamond4Meta.setDisplayName("§bDiamond 4");
                 diamond4.setItemMeta(diamond4Meta);
 
                 ItemStack emerald1 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald1Meta = emerald1.getItemMeta();
-                emerald1Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 1");
+                emerald1Meta.setDisplayName("§2Emerald 1");
                 emerald1.setItemMeta(emerald1Meta);
 
                 ItemStack emerald2 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald2Meta = emerald2.getItemMeta();
-                emerald2Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 2");
+                emerald2Meta.setDisplayName("§2Emerald 2");
                 emerald2.setItemMeta(emerald2Meta);
 
                 ItemStack emerald3 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald3Meta = emerald3.getItemMeta();
-                emerald3Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 3");
+                emerald3Meta.setDisplayName("§2Emerald 3");
                 emerald3.setItemMeta(emerald3Meta);
 
                 ItemStack emerald4 = new ItemStack(Material.EMERALD_BLOCK);
                 ItemMeta emerald4Meta = emerald4.getItemMeta();
-                emerald4Meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald 4");
+                emerald4Meta.setDisplayName("§2Emerald 4");
                 emerald4.setItemMeta(emerald4Meta);
 
                 ItemStack que = new ItemStack(Material.GLASS);
                 ItemMeta queMeta = que.getItemMeta();
-                queMeta.setDisplayName(ChatColor.GOLD + "Que");
+                queMeta.setDisplayName("§6Que");
                 que.setItemMeta(queMeta);
 
                 delBase.setItem(0, base1);
