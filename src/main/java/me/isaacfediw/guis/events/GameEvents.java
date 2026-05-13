@@ -1,8 +1,9 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
-import me.isaacfediw.guis.commands.StopCommand;
 import me.isaacfediw.guis.commands.OpenScoreboard;
+import me.isaacfediw.guis.utils.ItemMaker;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
@@ -12,13 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static me.isaacfediw.guis.commands.QueueCommand.*;
@@ -51,38 +49,38 @@ public class GameEvents implements Listener {
     }
     public void breakBed(Player p, String bed, Location bedLoc) {
         OpenScoreboard sb = new OpenScoreboard();
+        PlayerData playerData;
 
         Location queLoc = plugin.getConfig().getLocation("Que");
-        for (Player player : queuedPlayers){
-
+        for (Player player : queuedPlayers) {
             if (player.isOnline()) {
-                if (team.get(p).equals("Red") && bed.equalsIgnoreCase("Red")) {
+                if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
+                else playerData = new PlayerData(player);
+
+                if (playerData.getPlayerTeam().equals("Red") && bed.equalsIgnoreCase("Red")) {
                     redBedLoc = bedLoc;
-                    player.sendMessage("§cYour bed has been destroyed!");
-                    player.setBedSpawnLocation(queLoc, true);
-                    lifeStatus.replace(player, "Bed_Broken");
                     sb.setRedScoreboard();
-                } else if (team.get(p).equals("Yellow") && bed.equalsIgnoreCase("Yellow")) {
+                } else if (playerData.getPlayerTeam().equals("Yellow") && bed.equalsIgnoreCase("Yellow")) {
                     yellowBedLoc = bedLoc;
-                    player.sendMessage("§cYour bed has been destroyed!");
-                    player.setBedSpawnLocation(queLoc, true);
-                    lifeStatus.replace(player, "Bed_Broken");
                     sb.setYellowScoreboard();
-                } else if (team.get(p).equals("Blue") && bed.equalsIgnoreCase("Blue")) {
+                } else if (playerData.getPlayerTeam().equals("Blue") && bed.equalsIgnoreCase("Blue")) {
                     blueBedLoc = bedLoc;
-                    player.sendMessage("§cYour bed has been destroyed!");
-                    player.setBedSpawnLocation(queLoc, true);
-                    lifeStatus.replace(player, "Bed_Broken");
                     sb.setBlueScoreboard();
-                } else if (team.get(p).equals("Black") && bed.equalsIgnoreCase("Black")) {
+                } else if (playerData.getPlayerTeam().equals("Black") && bed.equalsIgnoreCase("Black")) {
                     blackBedLoc = bedLoc;
+                    sb.setBlackScoreboard();
+                }
+
+                if (playerData.getPlayerTeam().equalsIgnoreCase(bed)) {
                     player.sendMessage("§cYour bed has been destroyed!");
                     player.setBedSpawnLocation(queLoc, true);
-                    lifeStatus.replace(player, "Bed_Broken");
-                    sb.setBlackScoreboard();
+                    playerData.setLifeStatus("Bed_Broken");
                 }
             }
         }
+
+        sb.setInitialScoreboard(queuedPlayers);
+
         switch (bed) {
             case "Red":
                 Bukkit.broadcastMessage("§c" + bed + " bed has been broken by " + p.getName() + "!");
@@ -147,7 +145,13 @@ public class GameEvents implements Listener {
         if (emerald4Loc != null) plugin.generator(emerald4Loc, 2000, "EMERALD", 1000);
     }
 
-    public void addToTeam(int index, Player p) {
+    public void addToTeam(int index, String team, Player p) {
+        PlayerData playerData;
+
+        if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+        else playerData = new PlayerData(p);
+
+        playerData.setPlayerTeam(team);
         teams.get(index).add(p.getName());
     }
 
@@ -156,7 +160,7 @@ public class GameEvents implements Listener {
         if (e.getEntity() instanceof Player) {
             if (queuedPlayers.contains((Player) e.getEntity())) {
                 OpenScoreboard sb = new OpenScoreboard();
-                sb.setHealthScoreboard();
+                sb.updateHealthScoreboard();
             }
         }
     }
@@ -167,39 +171,71 @@ public class GameEvents implements Listener {
         Location blueLoc = plugin.getConfig().getLocation("Blue");
         Location blackLoc = plugin.getConfig().getLocation("Black");
 
+        if (redLoc == null) {
+            Bukkit.broadcastMessage("§cRed base is not set up!");
+            return;
+        }
+
+        if (yellowLoc == null) {
+            Bukkit.broadcastMessage("§cYellow base is not set up!");
+            return;
+        }
+
+        if (blueLoc == null) {
+            Bukkit.broadcastMessage("§cBlue base is not set up!");
+            return;
+        }
+
+        if (blackLoc == null) {
+            Bukkit.broadcastMessage("§cBlack base is not set up!");
+            return;
+        }
+
+
         restoreBeds();
         startGens(redLoc, yellowLoc, blueLoc, blackLoc);
 
         OpenScoreboard sb = new OpenScoreboard();
 
+        Location bedLoc = null;
+
+        PlayerData playerData;
+
         for (Player player : queuedPlayers) {
-            if (team.get(player).equals("Red")) {
-                player.teleport(redLoc);
-                player.setBedSpawnLocation(redLoc, true);
-            } else if (team.get(player).equals("Yellow")) {
-                player.teleport(yellowLoc);
-                player.setBedSpawnLocation(yellowLoc, true);
-            } else if (team.get(player).equals("Blue")) {
-                player.teleport(blueLoc);
-                player.setBedSpawnLocation(blueLoc, true);
-            } else if (team.get(player).equals("Black")) {
-                player.teleport(blackLoc);
-                player.setBedSpawnLocation(blackLoc, true);
+            if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
+            else playerData = new PlayerData(player);
+
+            //switch (team.get(player))) {
+            switch (playerData.getPlayerTeam()) {
+                case "Red":
+                    bedLoc = redLoc;
+                    break;
+                case "Yellow":
+                    bedLoc = yellowLoc;
+                    break;
+                case "Blue":
+                    bedLoc = blueLoc;
+                    break;
+                case "Black":
+                    bedLoc = blackLoc;
+                    break;
             }
 
-            lifeStatus.replace(player, "Has_Bed");
-            sb.setInitialScoreboard(player);
-            sb.setHealthScoreboard();
+            if (bedLoc != null) {
+                player.teleport(bedLoc);
+                player.setBedSpawnLocation(bedLoc, true);
+            }
 
-            ItemStack sword = new ItemStack(Material.WOODEN_SWORD);
-            ItemMeta swordMeta = sword.getItemMeta();
-            if (swordMeta != null) swordMeta.setUnbreakable(true);
-            sword.setItemMeta(swordMeta);
+            playerData.setLifeStatus("Has_Bed");
+
+            ItemStack sword = ItemMaker.buildItem(Material.WOODEN_SWORD, true);
             player.getInventory().addItem(sword);
             player.setGameMode(GameMode.SURVIVAL);
             player.setFoodLevel(20);
             player.setHealth(20);
         }
+
+        sb.setInitialScoreboard(queuedPlayers);
     }
 
     public void stop() {
@@ -210,42 +246,50 @@ public class GameEvents implements Listener {
         OpenScoreboard.blackStatus = "✔";
         aliveTeams = 0;
 
+        PlayerData playerData;
+
         for (Player player : queuedPlayers) {
             if (player != null && player.isOnline()) {
-                PersistentDataContainer container = player.getPersistentDataContainer();
-                NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
-                NamespacedKey prot = new NamespacedKey(plugin, "prot");
-                NamespacedKey haste = new NamespacedKey(plugin, "haste");
+                if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
+                else playerData = new PlayerData(player);
 
                 Location queLoc = plugin.getConfig().getLocation("Que");
+
                 player.setPlayerListName("§f" + player.getName());
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SURVIVAL);
-                player.teleport(queLoc);
+                if (queLoc != null) player.teleport(queLoc);
                 player.setBedSpawnLocation(queLoc, true);
                 player.getEnderChest().clear();
-                sb.setInitialScoreboard(player);
 
-                lifeStatus.replace(player, "N/A");
-                team.replace(player, "None");
-                container.set(sharp, PersistentDataType.STRING, "N/A");
-                container.set(prot, PersistentDataType.STRING, "N/A");
-                container.set(haste, PersistentDataType.STRING, "N/A");
+                playerData.setLifeStatus("N/A");
+                playerData.setPlayerTeam("N/A");
+
+                playerData.setEnchants(new HashMap<String, Integer>(){{
+                    put("sharp", 0);
+                    put("prot", 0);
+                    put("haste", 0);
+                }});
             }
         }
+
+        sb.removeScoreboard(queuedPlayers);
 
         for (List<String> team : teams) {
             team.clear();
         }
 
-        for (Block b : breakableBlocks){
+        for (Block b : breakableBlocks) {
             b.setType(Material.AIR);
         }
         queuedPlayers.clear();
         breakableBlocks.clear();
 
-        for (Entity entity : Bukkit.getWorld("world").getEntities()){
-            if (entity.getType().equals(EntityType.DROPPED_ITEM)){
+        World world = Bukkit.getWorld("world");
+        if (world == null) return;
+
+        for (Entity entity : world.getEntities()) {
+            if (entity.getType().equals(EntityType.DROPPED_ITEM)) {
                 entity.remove();
             }
         }

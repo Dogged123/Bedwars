@@ -8,9 +8,9 @@ import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 public class VoidListener implements Listener {
 
     @EventHandler
-    public void onPlayerFall(PlayerMoveEvent e){
-        if (queuedPlayers.contains(e.getPlayer())){
-            if (e.getPlayer().getLocation().getY() <= 0){
+    public void onPlayerFall(PlayerMoveEvent e) {
+        if (queuedPlayers.contains(e.getPlayer())) {
+            if (e.getPlayer().getLocation().getY() <= 0) {
                 e.getPlayer().setHealth(0);
             }
         }

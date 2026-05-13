@@ -1,8 +1,8 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
@@ -12,19 +12,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
-import static me.isaacfediw.guis.commands.QueueCommand.team;
+//import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class MakeGolemAgro implements Listener {
 
     GUIs plugin;
     private final HashMap<IronGolem, Player> playerGolems = new HashMap<>();
-    public MakeGolemAgro(GUIs p){
+    public MakeGolemAgro(GUIs p) {
         plugin = p;
     }
     @EventHandler
@@ -48,9 +46,19 @@ public class MakeGolemAgro implements Listener {
                             golem.setHealth(0);
                             cancel();
                         }
-                        for (Player player : queuedPlayers) {
 
-                            if (!(team.get(p).equals(team.get(playerGolems.get(golem)))) && player.getLocation().distance(golem.getLocation()) <= 20) {
+                        PlayerData playerData;
+                        PlayerData golemPlayerData;
+
+                        for (Player player : queuedPlayers) {
+                            if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
+                            else playerData = new PlayerData(player);
+
+                            if (PlayerData.playersData.containsKey(playerGolems.get(golem))) golemPlayerData = PlayerData.playersData.get(playerGolems.get(golem));
+                            else golemPlayerData = new PlayerData(playerGolems.get(golem));
+
+                            //if (!(team.get(p).equals(team.get(playerGolems.get(golem)))) && player.getLocation().distance(golem.getLocation()) <= 20) {
+                            if (!playerData.getPlayerTeam().equals(golemPlayerData.getPlayerTeam()) && player.getLocation().distance(golem.getLocation()) <= 20) {
                                 golem.setTarget(player);
                             }
                         }
@@ -68,7 +76,16 @@ public class MakeGolemAgro implements Listener {
             if (e.getEntity() instanceof IronGolem) {
                 IronGolem golem = (IronGolem) e.getEntity();
 
-                if (team.get(p).equals(team.get(playerGolems.get(golem)))) {
+                PlayerData playerData;
+                if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+                else playerData = new PlayerData(p);
+
+                PlayerData golemPlayerData;
+                if (PlayerData.playersData.containsKey(playerGolems.get(golem))) golemPlayerData = PlayerData.playersData.get(playerGolems.get(golem));
+                else golemPlayerData = new PlayerData(playerGolems.get(golem));
+
+                //if (team.get(p).equals(team.get(playerGolems.get(golem)))) {
+                if (playerData.getPlayerTeam().equals(golemPlayerData.getPlayerTeam())) {
                     e.setCancelled(true);
                 }
             }

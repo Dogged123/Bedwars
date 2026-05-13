@@ -1,6 +1,7 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -15,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.ArrayList;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
-import static me.isaacfediw.guis.commands.QueueCommand.team;
+//import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class BlockEvents implements Listener {
     public static ArrayList<Block> breakableBlocks = new ArrayList<>();
@@ -37,33 +38,40 @@ public class BlockEvents implements Listener {
         Player p = e.getPlayer();
         GameEvents gam = new GameEvents(plugin);
 
+        PlayerData pData;
+
+        if (PlayerData.playersData.containsKey(p)) pData = PlayerData.playersData.get(p);
+        else pData = new PlayerData(p);
+
+        String team = pData.getPlayerTeam();
+
         if (!p.getGameMode().equals(GameMode.CREATIVE)) {
             if (e.getBlock().getType().toString().contains("BED")) {
                 e.setDropItems(false);
 
                 if (e.getBlock().getType().equals(Material.RED_BED)) {
-                    if (team.get(p).equals("Red")) {
+                    if (team.equals("Red")) {
                         e.setCancelled(true);
                         return;
                     } else {
                         gam.breakBed(p, "Red", e.getBlock().getLocation());
                     }
                 } else if (e.getBlock().getType().equals(Material.YELLOW_BED)) {
-                    if (team.get(p).equals("Yellow")) {
+                    if (team.equals("Yellow")) {
                         e.setCancelled(true);
                         return;
-                    }else{
+                    } else {
                         gam.breakBed(p, "Yellow", e.getBlock().getLocation());
                     }
-                }else if (e.getBlock().getType().equals(Material.BLUE_BED)) {
-                    if (team.get(p).equals("Blue")) {
+                } else if (e.getBlock().getType().equals(Material.BLUE_BED)) {
+                    if (team.equals("Blue")) {
                         e.setCancelled(true);
                         return;
-                    }else {
+                    } else {
                         gam.breakBed(p, "Blue", e.getBlock().getLocation());
                     }
-                }else if (e.getBlock().getType().equals(Material.BLACK_BED)) {
-                    if (team.get(p).equals("Black")) {
+                } else if (e.getBlock().getType().equals(Material.BLACK_BED)) {
+                    if (team.equals("Black")) {
                         e.setCancelled(true);
                         return;
                     } else {
@@ -73,8 +81,8 @@ public class BlockEvents implements Listener {
             }
 
             if (!breakableBlocks.contains(e.getBlock()) && !e.getBlock().getType().toString().contains("BED") && queuedPlayers.contains(p)){
-                    e.setCancelled(true);
-                    p.sendMessage("§cYou can only break blocks placed by a player!");
+                e.setCancelled(true);
+                p.sendMessage("§cYou can only break blocks placed by a player!");
             }
         }
     }
@@ -86,6 +94,7 @@ public class BlockEvents implements Listener {
         if (!queuedPlayers.contains(p)) return;
 
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            if (e.getClickedBlock() == null) return;
             if (e.getClickedBlock().getType().toString().contains("BED") && !e.getClickedBlock().getType().equals(Material.BEDROCK)) {
                 if (p.getPose().equals(Pose.SNEAKING)) return;
                 e.setCancelled(true);

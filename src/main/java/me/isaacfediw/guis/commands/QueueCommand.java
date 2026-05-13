@@ -2,6 +2,7 @@ package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.events.GameEvents;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,32 +22,41 @@ import static me.isaacfediw.guis.events.GameEvents.teams;
 
 public class QueueCommand implements CommandExecutor {
     public static ArrayList<Player> queuedPlayers = new ArrayList<>();
-    public static Map<Player, String> lifeStatus = new HashMap<>();
-    public static Map<Player, String> team = new HashMap<>();
+    //public static Map<Player, String> lifeStatus = new HashMap<>();
+    //public static Map<Player, String> team = new HashMap<>();
 
     private int timeLeft;
     GUIs plugin;
 
-    public QueueCommand(GUIs plugin){
+    public QueueCommand(GUIs plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
 
-            PersistentDataContainer container = p.getPersistentDataContainer();
-            NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
-            NamespacedKey prot = new NamespacedKey(plugin, "prot");
-            NamespacedKey haste = new NamespacedKey(plugin, "haste");
+            PlayerData playerData;
 
-            if (!lifeStatus.containsKey(p)) lifeStatus.put(p, "N/A");
-            if (!team.containsKey(p)) team.put(p, "N/A");
+            if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+            else playerData = new PlayerData(p);
+
+//            PersistentDataContainer container = p.getPersistentDataContainer();
+//            NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
+//            NamespacedKey prot = new NamespacedKey(plugin, "prot");
+//            NamespacedKey haste = new NamespacedKey(plugin, "haste");
+
+//            if (!lifeStatus.containsKey(p)) lifeStatus.put(p, "N/A");
+//            if (!team.containsKey(p)) team.put(p, "N/A");
 
             if (queuedPlayers.contains(p) && args.length >= 1) {
-                if (!lifeStatus.get(p).equals("In_Queue")) {
+//                if (!lifeStatus.get(p).equals("In_Queue")) {
+//                    p.sendMessage("§cYou cannot leave the queue while in the game!");
+//                    return true;
+//                }
+
+                if (!playerData.getLifeStatus().equals("In_Queue")) {
                     p.sendMessage("§cYou cannot leave the queue while in the game!");
                     return true;
                 }
@@ -55,7 +66,8 @@ public class QueueCommand implements CommandExecutor {
                 p.getInventory().clear();
                 p.sendMessage("§aYou left the queue!");
 
-                switch (team.get(p)) {
+                //switch (team.get(p)) {
+                switch (playerData.getPlayerTeam()) {
                     case "Red":
                         teams.get(0).remove(p.getName());
                         break;
@@ -70,11 +82,14 @@ public class QueueCommand implements CommandExecutor {
                         break;
                 }
 
-                lifeStatus.replace(p, "N/A");
-                team.replace(p, "N/A");
-                container.set(sharp, PersistentDataType.STRING, "N/A");
-                container.set(prot, PersistentDataType.STRING, "N/A");
-                container.set(haste, PersistentDataType.STRING, "N/A");
+                playerData.setLifeStatus("N/A");
+                playerData.setPlayerTeam("N/A");
+
+//                lifeStatus.replace(p, "N/A");
+//                team.replace(p, "N/A");
+//                container.set(sharp, PersistentDataType.STRING, "N/A");
+//                container.set(prot, PersistentDataType.STRING, "N/A");
+//                container.set(haste, PersistentDataType.STRING, "N/A");
                 p.setLevel(0);
 
                 if (queuedPlayers.isEmpty()) {
@@ -89,7 +104,7 @@ public class QueueCommand implements CommandExecutor {
             }
 
             queueProcedures(p);
-        }else {
+        } else {
             if (args.length < 1) {
                 sender.sendMessage("Please specify a player to add to the queue");
                 return true;
@@ -110,12 +125,18 @@ public class QueueCommand implements CommandExecutor {
         TeamAdder teamAdding = new TeamAdder(plugin);
         int teamNum = (int) (Math.random() * 4);
 
-        PersistentDataContainer container = p.getPersistentDataContainer();
-        NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
-        NamespacedKey prot = new NamespacedKey(plugin, "prot");
-        NamespacedKey haste = new NamespacedKey(plugin, "haste");
+        PlayerData playerData;
 
-        if (plugin.getConfig().get("Que") == null) {
+        if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+        else playerData = new PlayerData(p);
+
+//        PersistentDataContainer container = p.getPersistentDataContainer();
+//        NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
+//        NamespacedKey prot = new NamespacedKey(plugin, "prot");
+//        NamespacedKey haste = new NamespacedKey(plugin, "haste");
+
+        Location queLoc = plugin.getConfig().getLocation("Que");
+        if (queLoc == null) {
             p.sendMessage("§cThe que is not set up!");
             return;
         }
@@ -141,38 +162,41 @@ public class QueueCommand implements CommandExecutor {
         teamAdding.addToTeam(p, teamNum);
 
         if (teams.get(teamNum).size() - 1 == 0) {
-            aliveTeams ++;
+            aliveTeams++;
         }
 
         queuedPlayers.add(p);
 
         if (teamNum == 0) {
-            team.replace(p, "Red");
-        }else if (teamNum == 1) {
-            team.replace(p, "Yellow");
-        }else if (teamNum == 2) {
-            team.replace(p, "Blue");
-        }else if (teamNum == 3) {
-            team.replace(p, "Black");
+            //team.replace(p, "Red");
+            playerData.setPlayerTeam("Red");
+        } else if (teamNum == 1) {
+            //team.replace(p, "Yellow");
+            playerData.setPlayerTeam("Yellow");
+        } else if (teamNum == 2) {
+            //team.replace(p, "Blue");
+            playerData.setPlayerTeam("Blue");
+        } else if (teamNum == 3) {
+            //team.replace(p, "Black");
+            playerData.setPlayerTeam("Black");
         }
 
-        lifeStatus.replace(p, "In_Queue");
-        container.set(sharp, PersistentDataType.STRING, "None");
-        container.set(prot, PersistentDataType.STRING, "None");
-        container.set(haste, PersistentDataType.STRING, "None");
+//        lifeStatus.replace(p, "In_Queue");
+//        container.set(sharp, PersistentDataType.STRING, "None");
+//        container.set(prot, PersistentDataType.STRING, "None");
+//        container.set(haste, PersistentDataType.STRING, "None");
 
-        Location queLoc = plugin.getConfig().getLocation("Que");
+        playerData.setLifeStatus("In_Queue");
+
         p.setGameMode(GameMode.SURVIVAL);
         p.teleport(queLoc);
 
-        //Change == 1 to == 2 for multiplayer
         if (queuedPlayers.size() == 2) {
             timeLeft = 20;
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    //Change == 0 to == 1 for multiplayer
-                    if (queuedPlayers.size() == 1){
+                    if (queuedPlayers.size() == 1) {
                         timeLeft = 20;
                         cancel();
                     }
@@ -186,7 +210,7 @@ public class QueueCommand implements CommandExecutor {
                     for (Player queuedPlayer : queuedPlayers) {
                         queuedPlayer.setLevel(timeLeft);
                     }
-                    timeLeft --;
+                    timeLeft--;
 
                     if (timeLeft == 0) {
                         for (Player queuedPlayer : queuedPlayers) {

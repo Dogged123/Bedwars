@@ -2,6 +2,8 @@ package me.isaacfediw.guis.events.shops;
 
 import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.ItemShopCommand;
+import me.isaacfediw.guis.utils.ItemMaker;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -11,13 +13,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+//import org.bukkit.persistence.PersistentDataContainer;
+//import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import java.util.ArrayList;
 
-import static me.isaacfediw.guis.commands.QueueCommand.team;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ItemShopListener implements Listener {
 
@@ -25,80 +27,18 @@ public class ItemShopListener implements Listener {
 
     ItemShopCommand shop = new ItemShopCommand();
 
-    public ItemShopListener(GUIs p){
-        plugin = p;
-    }
+    public ItemShopListener(GUIs p) {plugin = p;}
 
     @EventHandler
     public void onWeaponClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        PersistentDataContainer container = p.getPersistentDataContainer();
-        NamespacedKey sharp = new NamespacedKey(plugin, "sharp");
-        NamespacedKey prot = new NamespacedKey(plugin, "prot");
+        PlayerData playerData;
+        if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+        else playerData = new PlayerData(p);
 
-        if (!container.has(sharp, PersistentDataType.STRING)){
-            container.set(sharp, PersistentDataType.STRING, "None");
-        }
-        if (!container.has(prot, PersistentDataType.STRING)){
-            container.set(prot, PersistentDataType.STRING, "None");
-        }
-
-        ItemStack ironLegs = new ItemStack(Material.IRON_LEGGINGS);
-        ItemMeta ironLegsMeta = ironLegs.getItemMeta();
-        ironLegsMeta.setUnbreakable(true);
-        if (container.get(prot, PersistentDataType.STRING).equals("one")){
-            ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("two")){
-            ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("three")){
-            ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 3, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("four")){
-            ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-        }
-        ironLegs.setItemMeta(ironLegsMeta);
-
-        ItemStack ironBoots = new ItemStack(Material.IRON_BOOTS);
-        ItemMeta ironBootsMeta = ironBoots.getItemMeta();
-        ironBootsMeta.setUnbreakable(true);
-        if (container.get(prot, PersistentDataType.STRING).equals("one")){
-            ironBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("two")){
-            ironBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("three")){
-            ironBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 3, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("four")){
-            ironBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-        }
-        ironBoots.setItemMeta(ironBootsMeta);
-
-        ItemStack diamondLegs = new ItemStack(Material.DIAMOND_LEGGINGS);
-        ItemMeta diamondLegsMeta = diamondLegs.getItemMeta();
-        diamondLegsMeta.setUnbreakable(true);
-        if (container.get(prot, PersistentDataType.STRING).equals("one")){
-            diamondLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("two")){
-            diamondLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("three")){
-            diamondLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 3, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("four")){
-            diamondLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-        }
-        diamondLegs.setItemMeta(diamondLegsMeta);
-
-        ItemStack diamondBoots = new ItemStack(Material.DIAMOND_BOOTS);
-        ItemMeta diamondBootsMeta = diamondBoots.getItemMeta();
-        diamondBootsMeta.setUnbreakable(true);
-        if (container.get(prot, PersistentDataType.STRING).equals("one")){
-            diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("two")){
-            diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("three")){
-            diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 3, true);
-        }else if (container.get(prot, PersistentDataType.STRING).equals("four")){
-            diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-        }
-        diamondBoots.setItemMeta(diamondBootsMeta);
+        int sharpLevel = playerData.getEnchants().get("sharp");
+        int protLevel = playerData.getEnchants().get("prot");
 
         if (e.getView().getTitle().equalsIgnoreCase("§6Combat")) {
             switch (e.getSlot()) {
@@ -107,21 +47,22 @@ public class ItemShopListener implements Listener {
                     shop.openItemShop(p);
                     break;
                 case 10:
-                    ItemStack sword = new ItemStack(Material.WOODEN_SWORD);
+                    ItemStack sword = ItemMaker.buildItem(Material.WOODEN_SWORD, true);
                     ItemMeta swordMeta = sword.getItemMeta();
-                    swordMeta.setUnbreakable(true);
-                    if (container.get(sharp, PersistentDataType.STRING).equals("true")) {
-                        swordMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
-                    }
+
+                    if (swordMeta != null && sharpLevel > 0)
+                        swordMeta.addEnchant(Enchantment.DAMAGE_ALL, sharpLevel, true);
+
                     sword.setItemMeta(swordMeta);
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(sword, 1)) {
                         p.getInventory().removeItem(sword);
-                        ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
+
+                        ItemStack stoneSword = ItemMaker.buildItem(Material.STONE_SWORD, true);
                         ItemMeta stoneSwordMeta = stoneSword.getItemMeta();
-                        stoneSwordMeta.setUnbreakable(true);
-                        if (container.get(sharp, PersistentDataType.STRING).equals("true")){
-                            stoneSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
-                        }
+
+                        if (stoneSwordMeta != null && sharpLevel > 0)
+                            stoneSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, sharpLevel, true);
+
                         stoneSword.setItemMeta(stoneSwordMeta);
                         p.getInventory().addItem(stoneSword);
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
@@ -134,15 +75,16 @@ public class ItemShopListener implements Listener {
                     break;
                 case 12:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 7)) {
-                        if (p.getInventory().contains(Material.WOODEN_SWORD)){
+                        if (p.getInventory().contains(Material.WOODEN_SWORD)) {
                             p.getInventory().remove(Material.WOODEN_SWORD);
                         }
-                        ItemStack ironSword = new ItemStack(Material.IRON_SWORD);
+
+                        ItemStack ironSword = ItemMaker.buildItem(Material.IRON_SWORD, true);
                         ItemMeta ironSwordMeta = ironSword.getItemMeta();
-                        ironSwordMeta.setUnbreakable(true);
-                        if (container.get(sharp, PersistentDataType.STRING).equals("true")){
-                            ironSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
-                        }
+
+                        if (ironSwordMeta != null && sharpLevel > 0)
+                            ironSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, sharpLevel, true);
+
                         ironSword.setItemMeta(ironSwordMeta);
                         p.getInventory().addItem(ironSword);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 7));
@@ -155,15 +97,15 @@ public class ItemShopListener implements Listener {
                     break;
                 case 14:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 4)) {
-                        if (p.getInventory().contains(Material.WOODEN_SWORD)){
+                        if (p.getInventory().contains(Material.WOODEN_SWORD)) {
                             p.getInventory().remove(Material.WOODEN_SWORD);
                         }
-                        ItemStack diamondSword = new ItemStack(Material.DIAMOND_SWORD);
+                        ItemStack diamondSword = ItemMaker.buildItem(Material.DIAMOND_SWORD, true);
                         ItemMeta diamondSwordMeta = diamondSword.getItemMeta();
-                        diamondSwordMeta.setUnbreakable(true);
-                        if (container.get(sharp, PersistentDataType.STRING).equals("true")){
-                            diamondSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
-                        }
+
+                        if (diamondSwordMeta != null && sharpLevel > 0)
+                            diamondSwordMeta.addEnchant(Enchantment.DAMAGE_ALL, sharpLevel, true);
+
                         diamondSword.setItemMeta(diamondSwordMeta);
                         p.getInventory().addItem(diamondSword);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 4));
@@ -176,11 +118,12 @@ public class ItemShopListener implements Listener {
                     break;
                 case 16:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 5)) {
-                        ItemStack kb_stick = new ItemStack(Material.STICK);
-                        ItemMeta kb_stick_meta = kb_stick.getItemMeta();
-                        kb_stick_meta.addEnchant(Enchantment.KNOCKBACK, 2, true);
-                        kb_stick.setItemMeta(kb_stick_meta);
-                        p.getInventory().addItem(kb_stick);
+
+                        ItemStack kbStick = ItemMaker.buildItem(Material.STICK, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.KNOCKBACK, 2);
+                        }});
+
+                        p.getInventory().addItem(kbStick);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 5));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased KnockBack Stick");
@@ -190,78 +133,120 @@ public class ItemShopListener implements Listener {
                     }
                     break;
                 case 20:
-                    if(p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 12)){
+                    ItemStack ironLegs = ItemMaker.buildItem(Material.IRON_LEGGINGS, true);
+                    ItemMeta ironLegsMeta = ironLegs.getItemMeta();
+
+                    if (protLevel > 0 && ironLegsMeta != null)
+                        ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, protLevel, true);
+
+                    ironLegs.setItemMeta(ironLegsMeta);
+
+                    ItemStack ironBoots = ItemMaker.buildItem(Material.IRON_BOOTS, true);
+                    ItemMeta ironBootsMeta = ironLegs.getItemMeta();
+
+                    if (protLevel > 0 && ironLegsMeta != null)
+                        ironLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, protLevel, true);
+
+                    ironBoots.setItemMeta(ironBootsMeta);
+
+                    for (ItemStack armourContent : p.getInventory().getArmorContents()) {
+                        if (armourContent.getType().toString().contains("DIAMOND")) break;
+                    }
+
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 12)) {
                         p.getInventory().setLeggings(ironLegs);
                         p.getInventory().setBoots(ironBoots);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 12));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Iron Armor");
-                    }else{
+
+                        playerData.setArmourItem(2, ironLegs);
+                        playerData.setArmourItem(3, ironBoots);
+                    } else {
                         p.sendMessage("§cYou do not have enough gold to purchase iron armor!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case 24:
-                    if(p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 6)){
+                    ItemStack diamondLegs = ItemMaker.buildItem(Material.DIAMOND_LEGGINGS, true);
+                    ItemMeta diamondLegsMeta = diamondLegs.getItemMeta();
+
+                    if (protLevel > 0 && diamondLegsMeta != null)
+                        diamondLegsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, protLevel, true);
+
+                    diamondLegs.setItemMeta(diamondLegsMeta);
+
+                    ItemStack diamondBoots = ItemMaker.buildItem(Material.DIAMOND_BOOTS, true);
+                    ItemMeta diamondBootsMeta = diamondBoots.getItemMeta();
+
+                    if (protLevel > 0 && diamondBootsMeta != null)
+                        diamondBootsMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, protLevel, true);
+
+                    diamondBoots.setItemMeta(diamondBootsMeta);
+
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 6)) {
                         p.getInventory().setLeggings(diamondLegs);
                         p.getInventory().setBoots(diamondBoots);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 6));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Diamond Armor");
-                    }else{
+
+                        playerData.setArmourItem(2, diamondLegs);
+                        playerData.setArmourItem(3, diamondBoots);
+                    } else {
                         p.sendMessage("§cYou do not have enough emeralds to purchase diamond armor!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case 28:
-                    if(p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 12)){
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 12)) {
                         p.getInventory().addItem(new ItemStack(Material.BOW));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 12));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Bow");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough gold to purchase bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case 30:
-                    if(p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 24)){
-                        ItemStack power_bow = new ItemStack(Material.BOW);
-                        ItemMeta power_bow_meta = power_bow.getItemMeta();
-                        power_bow_meta.addEnchant(Enchantment.ARROW_DAMAGE, 2, true);
-                        power_bow.setItemMeta(power_bow_meta);
-                        p.getInventory().addItem(power_bow);
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 24)) {
+                        ItemStack powerBow = ItemMaker.buildItem(Material.BOW, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.ARROW_DAMAGE, 2);
+                        }});
+
+                        p.getInventory().addItem(powerBow);
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 24));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Power Bow");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough gold to purchase power bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case 32:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 6)){
-                        ItemStack punch_bow = new ItemStack(Material.BOW);
-                        ItemMeta punch_bow_meta = punch_bow.getItemMeta();
-                        punch_bow_meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
-                        punch_bow_meta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, true);
-                        punch_bow.setItemMeta(punch_bow_meta);
-                        p.getInventory().addItem(punch_bow);
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 6)) {
+                        ItemStack punchBow = ItemMaker.buildItem(Material.BOW, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.ARROW_DAMAGE, 1);
+                            put(Enchantment.ARROW_KNOCKBACK, 2);
+                        }});
+
+                        p.getInventory().addItem(punchBow);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 6));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Punch Bow");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough emeralds to purchase punch bow!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case 34:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 2)){
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 2)) {
                         p.getInventory().addItem(new ItemStack(Material.ARROW, 2));
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 2));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Arrows");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough gold to purchase arrows!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
@@ -274,8 +259,15 @@ public class ItemShopListener implements Listener {
     public void onToolsClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
+        PlayerData pData;
+
+        if (PlayerData.playersData.containsKey(p)) pData = PlayerData.playersData.get(p);
+        else pData = new PlayerData(p);
+
+        Map<String, Boolean> permItems = pData.getPermItems();
+
         if (e.getView().getTitle().equalsIgnoreCase("§6Tools")) {
-            if (e.getCurrentItem() == null){
+            if (e.getCurrentItem() == null) {
                 return;
             }
             switch (e.getCurrentItem().getType()) {
@@ -289,6 +281,9 @@ public class ItemShopListener implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.WOODEN_PICKAXE));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Wooden Pickaxe");
+
+                        permItems.replace("pick", true);
+                        pData.setPermItems(permItems);
                     } else {
                         p.sendMessage("§cYou do not have enough iron to purchase a wooden pickaxe!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
@@ -296,10 +291,10 @@ public class ItemShopListener implements Listener {
                     break;
                 case IRON_PICKAXE:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(new ItemStack(Material.WOODEN_PICKAXE), 1)) {
-                        ItemStack iPick = new ItemStack(Material.IRON_PICKAXE);
-                        ItemMeta iPickMeta = iPick.getItemMeta();
-                        iPickMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-                        iPick.setItemMeta(iPickMeta);
+                        ItemStack iPick = ItemMaker.buildItem(Material.IRON_PICKAXE, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.DIG_SPEED, 1);
+                        }});
+
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.getInventory().removeItem(new ItemStack(Material.WOODEN_PICKAXE, 1));
                         p.getInventory().addItem(iPick);
@@ -311,15 +306,15 @@ public class ItemShopListener implements Listener {
                     }
                     break;
                 case DIAMOND_PICKAXE:
-                    ItemStack iPick = new ItemStack(Material.IRON_PICKAXE);
-                    ItemMeta iPickMeta = iPick.getItemMeta();
-                    iPickMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-                    iPick.setItemMeta(iPickMeta);
+                    ItemStack iPick = ItemMaker.buildItem(Material.IRON_PICKAXE, true, new HashMap<Enchantment, Integer>(){{
+                        put(Enchantment.DIG_SPEED, 1);
+                    }});
+
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 4) && p.getInventory().containsAtLeast(iPick, 1)) {
-                        ItemStack dPick= new ItemStack(Material.DIAMOND_PICKAXE);
-                        ItemMeta dPickMeta = dPick.getItemMeta();
-                        dPickMeta.addEnchant(Enchantment.DIG_SPEED, 2, true);
-                        dPick.setItemMeta(dPickMeta);
+                        ItemStack dPick = ItemMaker.buildItem(Material.DIAMOND_PICKAXE, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.DIG_SPEED, 2);
+                        }});
+
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 4));
                         p.getInventory().removeItem(iPick);
                         p.getInventory().addItem(dPick);
@@ -336,54 +331,60 @@ public class ItemShopListener implements Listener {
                         p.getInventory().addItem(new ItemStack(Material.SHEARS));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Shears");
+
+                        permItems.replace("shears", true);
+                        pData.setPermItems(permItems);
                     } else {
                         p.sendMessage("§cYou do not have enough iron to purchase shears!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case WOODEN_AXE:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10)){
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10)) {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.getInventory().addItem(new ItemStack(Material.WOODEN_AXE));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Wooden Axe");
-                    }else{
+
+                        permItems.replace("axe", true);
+                        pData.setPermItems(permItems);
+                    } else {
                         p.sendMessage("§cYou do not have enough iron to purchase a wooden axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case IRON_AXE:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(new ItemStack(Material.WOODEN_AXE), 1)){
-                        ItemStack iAxe = new ItemStack(Material.IRON_AXE);
-                        ItemMeta iAxeMeta = iAxe.getItemMeta();
-                        iAxeMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-                        iAxe.setItemMeta(iAxeMeta);
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(new ItemStack(Material.WOODEN_AXE), 1)) {
+                        ItemStack iAxe = ItemMaker.buildItem(Material.IRON_AXE, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.DIG_SPEED, 1);
+                        }});
+
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
                         p.getInventory().removeItem((new ItemStack(Material.WOODEN_AXE)));
                         p.getInventory().addItem(iAxe);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Iron Axe");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough iron to purchase an iron axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
                     break;
                 case DIAMOND_AXE:
-                    ItemStack iAxe = new ItemStack(Material.IRON_AXE);
-                    ItemMeta iAxeMeta = iAxe.getItemMeta();
-                    iAxeMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-                    iAxe.setItemMeta(iAxeMeta);
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 4) && p.getInventory().containsAtLeast(iAxe, 1)){
-                        ItemStack dAxe = new ItemStack(Material.DIAMOND_AXE);
-                        ItemMeta dAxeMeta = dAxe.getItemMeta();
-                        dAxeMeta.addEnchant(Enchantment.DIG_SPEED, 2, true);
-                        dAxe.setItemMeta(dAxeMeta);
+                    ItemStack iAxe = ItemMaker.buildItem(Material.IRON_AXE, true, new HashMap<Enchantment, Integer>(){{
+                        put(Enchantment.DIG_SPEED, 1);
+                    }});
+
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 4) && p.getInventory().containsAtLeast(iAxe, 1)) {
+                        ItemStack dAxe = ItemMaker.buildItem(Material.DIAMOND_AXE, true, new HashMap<Enchantment, Integer>(){{
+                            put(Enchantment.DIG_SPEED, 2);
+                        }});
+
                         p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 4));
                         p.getInventory().removeItem(iAxe);
                         p.getInventory().addItem(dAxe);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Diamond Axe");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough gold to purchase a diamond axe!");
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }
@@ -392,12 +393,17 @@ public class ItemShopListener implements Listener {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onBlocksClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
+        PlayerData playerData;
+        if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
+        else playerData = new PlayerData(p);
+
         if (e.getView().getTitle().equalsIgnoreCase("§6Blocks")) {
-            if (e.getCurrentItem() == null){
+            if (e.getCurrentItem() == null) {
                 return;
             }
             switch (e.getSlot()) {
@@ -407,7 +413,8 @@ public class ItemShopListener implements Listener {
                     break;
                 case 10:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 4)) {
-                        Material woolColour = team.containsKey(p) ? Material.getMaterial(team.get(p).toUpperCase() + "_WOOL") : Material.WHITE_WOOL;
+                        Material woolColour = !playerData.getPlayerTeam().equals("N/A") ? Material.getMaterial(playerData.getPlayerTeam().toUpperCase() + "_WOOL") : Material.WHITE_WOOL;
+                        if (woolColour == null) woolColour = Material.WHITE_WOOL;
 
                         p.getInventory().addItem(new ItemStack(woolColour, 16));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 4));
@@ -442,7 +449,10 @@ public class ItemShopListener implements Listener {
                     break;
                 case 16:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 8)) {
-                        p.getInventory().addItem(new ItemStack(Material.TERRACOTTA, 4));
+                        Material clayColour = !playerData.getPlayerTeam().equals("N/A") ? Material.getMaterial(playerData.getPlayerTeam().toUpperCase() + "_TERRACOTTA") : Material.TERRACOTTA;
+                        if (clayColour == null) clayColour = Material.TERRACOTTA;
+
+                        p.getInventory().addItem(new ItemStack(clayColour, 4));
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 8));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Clay");
@@ -489,12 +499,15 @@ public class ItemShopListener implements Listener {
                     break;
                 case 9:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1)) {
-                        ItemStack speed = new ItemStack(Material.POTION);
-                        PotionMeta speed_meta = (PotionMeta) speed.getItemMeta();
-                        speed_meta.setDisplayName("§bSpeed Potion");
-                        speed_meta.setColor(Color.AQUA);
-                        speed_meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 900, 4), true);
-                        speed.setItemMeta(speed_meta);
+                        ItemStack speed = ItemMaker.buildItem(Material.POTION, "§bSpeed Potion");
+
+                        PotionMeta speedMeta = (PotionMeta) speed.getItemMeta();
+                        if (speedMeta != null) {
+                            speedMeta.setColor(Color.AQUA);
+                            speedMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 900, 4, false, false), true);
+                        }
+                        speed.setItemMeta(speedMeta);
+
                         p.getInventory().addItem(speed);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 1));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
@@ -506,12 +519,15 @@ public class ItemShopListener implements Listener {
                     break;
                 case 13:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1)) {
-                        ItemStack jump = new ItemStack(Material.POTION);
-                        PotionMeta jump_meta = (PotionMeta) jump.getItemMeta();
-                        jump_meta.setDisplayName("§aJump Boost Potion");
-                        jump_meta.setColor(Color.LIME);
-                        jump_meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 900, 4), true);
-                        jump.setItemMeta(jump_meta);
+                        ItemStack jump = ItemMaker.buildItem(Material.POTION, "§aJump Boost Potion");
+
+                        PotionMeta jumpMeta = (PotionMeta) jump.getItemMeta();
+                        if (jumpMeta != null) {
+                            jumpMeta.setColor(Color.LIME);
+                            jumpMeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 900, 4, false, false), true);
+                        }
+                        jump.setItemMeta(jumpMeta);
+
                         p.getInventory().addItem(jump);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 1));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
@@ -523,12 +539,15 @@ public class ItemShopListener implements Listener {
                     break;
                 case 17:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2)) {
-                        ItemStack invis = new ItemStack(Material.POTION);
-                        PotionMeta invis_meta = (PotionMeta) invis.getItemMeta();
-                        invis_meta.setDisplayName("§dInvisibility Potion");
-                        invis_meta.setColor(Color.PURPLE);
-                        invis_meta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 4), true);
-                        invis.setItemMeta(invis_meta);
+                        ItemStack invis = ItemMaker.buildItem(Material.POTION, "§dInvisibility Potion");
+
+                        PotionMeta invisMeta = (PotionMeta) invis.getItemMeta();
+                        if (invisMeta != null) {
+                            invisMeta.setColor(Color.PURPLE);
+                            invisMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 600, 1, false, false), true);
+                        }
+                        invis.setItemMeta(invisMeta);
+
                         p.getInventory().addItem(invis);
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 2));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
@@ -548,7 +567,7 @@ public class ItemShopListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         if (e.getView().getTitle().equalsIgnoreCase("§6Special Items")) {
-            if (e.getCurrentItem() == null){
+            if (e.getCurrentItem() == null) {
                 return;
             }
             switch (e.getCurrentItem().getType()) {
@@ -558,13 +577,8 @@ public class ItemShopListener implements Listener {
                     break;
                 case FIRE_CHARGE:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 40)) {
-                        ItemStack fireball = new ItemStack(Material.FIRE_CHARGE);
-                        ItemMeta fireball_meta = fireball.getItemMeta();
-                        fireball_meta.setDisplayName("§cFireball");
-                        ArrayList<String> fireball_lore = new ArrayList<>();
-                        fireball_lore.add("§6Throwable Fireball");
-                        fireball_meta.setLore(fireball_lore);
-                        fireball.setItemMeta(fireball_meta);
+                        ItemStack fireball  = ItemMaker.buildItem(Material.FIRE_CHARGE, "§eFireball", "§6Throwable Fireball");
+
                         p.getInventory().addItem(fireball);
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 40));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
@@ -609,22 +623,22 @@ public class ItemShopListener implements Listener {
                     break;
                 case WATER_BUCKET:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_INGOT), 6)) {
-                    p.getInventory().addItem(new ItemStack(Material.WATER_BUCKET));
-                    p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 6));
-                    p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                    p.sendMessage("§6Purchased Water Bucket");
-                } else {
-                    p.sendMessage("§cYou do not have enough gold to purchase water bucket!");
-                    p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
-                }
-                break;
+                        p.getInventory().addItem(new ItemStack(Material.WATER_BUCKET));
+                        p.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, 6));
+                        p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
+                        p.sendMessage("§6Purchased Water Bucket");
+                    } else {
+                        p.sendMessage("§cYou do not have enough gold to purchase water bucket!");
+                        p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
+                    }
+                    break;
                 case ENDER_PEARL:
-                    if(p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 4)){
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 4)) {
                         p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
                         p.getInventory().removeItem(new ItemStack(Material.EMERALD, 4));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased EnderPearl");
-                    }else{
+                    } else {
                         p.sendMessage("§cYou do not have enough emeralds to purchase ender pearl!");
                         p.playSound(p, Sound.ENTITY_ENDERMAN_TELEPORT, 10, 0);
                     }

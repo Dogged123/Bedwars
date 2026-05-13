@@ -8,19 +8,21 @@ import me.isaacfediw.guis.events.shops.ShopKeeperListeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public final class GUIs extends JavaPlugin {
 
     private static boolean stop;
+
     @Override
     public void onEnable() {
-
         getCommand("itemshop").setExecutor(new ItemShopCommand());
         getCommand("upgrades").setExecutor(new UpgradeShopCommand());
         getCommand("generator").setExecutor(this);
@@ -31,6 +33,7 @@ public final class GUIs extends JavaPlugin {
         getCommand("queue").setExecutor(new QueueCommand(this));
         getCommand("openScoreboard").setExecutor(new OpenScoreboard());
         getCommand("vanish").setExecutor(new VanishCommand(this));
+
         getServer().getPluginManager().registerEvents(new ShopListeners(this), this);
         getServer().getPluginManager().registerEvents(new ShopKeeperListeners(), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
@@ -54,7 +57,7 @@ public final class GUIs extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (!p.hasPermission("GUIs.generator")) {
@@ -76,7 +79,7 @@ public final class GUIs extends JavaPlugin {
                     stop = false;
                 }
             } catch (NumberFormatException exception) {
-                exception.printStackTrace();
+                getServer().getConsoleSender().sendMessage("§cException: " + exception);
             }
         }
         return true;
@@ -86,12 +89,15 @@ public final class GUIs extends JavaPlugin {
         stop = false;
         new BukkitRunnable() {
             int length = l;
+
             @Override
             public void run() {
                 if (length == 0 || stop) {
                     cancel();
                 } else {
-                    Bukkit.getWorld("world").dropItem(loc, new ItemStack(Material.getMaterial(resource)));
+                    World world = Bukkit.getWorld("world");
+                    Material resourceMat = Material.getMaterial(resource);
+                    if (world != null && resourceMat != null) world.dropItem(loc, new ItemStack(resourceMat));
                     length--;
                 }
             }

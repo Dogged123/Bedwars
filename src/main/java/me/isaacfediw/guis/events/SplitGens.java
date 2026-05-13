@@ -2,19 +2,17 @@ package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.QueueCommand;
+import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 
-import static me.isaacfediw.guis.commands.QueueCommand.team;
+//import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class SplitGens implements Listener {
 
@@ -33,69 +31,58 @@ public class SplitGens implements Listener {
             splittableItems.add(Material.IRON_INGOT);
             splittableItems.add(Material.GOLD_INGOT);
 
-            if (team.get(p) == null) return;
+            PlayerData pData;
 
-            switch (team.get(p).toLowerCase()) {
+            if (PlayerData.playersData.containsKey(p)) pData = PlayerData.playersData.get(p);
+            else pData = new PlayerData(p);
+
+            //if (team.get(p) == null) return;
+            if (pData.getPlayerTeam().equals("N/A")) return;
+
+            //switch (team.get(p).toLowerCase()) {
+            switch (pData.getPlayerTeam().toLowerCase()) {
                 case "red":
                     if (loc.distance(plugin.getConfig().getLocation("Red")) <= 3) {
                         if (!splittableItems.contains(e.getItem().getItemStack().getType())) return;
                         if (e.getItem().getOwner() != null) return;
-                        for (Player player : QueueCommand.queuedPlayers) {
-                            if (player == p) {
-                                continue;
-                            }
-                            if (player.getLocation().distance(loc) <= 2 &&
-                                    team.get(player).equalsIgnoreCase("red")) {
-                                player.getInventory().addItem(e.getItem().getItemStack());
-                            }
-                        }
                     }
+
                     break;
                 case "blue":
                     if (loc.distance(plugin.getConfig().getLocation("Blue")) <= 3) {
                         if (!splittableItems.contains(e.getItem().getItemStack().getType())) return;
                         if (e.getItem().getOwner() != null) return;
-                        for (Player player : QueueCommand.queuedPlayers) {
-                            if (player == p) {
-                                continue;
-                            }
-                            if (player.getLocation().distance(loc) <= 2 &&
-                                    team.get(player).equalsIgnoreCase("blue")) {
-                                player.getInventory().addItem(e.getItem().getItemStack());
-                            }
-                        }
                     }
+
                     break;
                 case "yellow":
                     if (loc.distance(plugin.getConfig().getLocation("Yellow")) <= 3) {
                         if (!splittableItems.contains(e.getItem().getItemStack().getType())) return;
                         if (e.getItem().getOwner() != null) return;
-                        for (Player player : QueueCommand.queuedPlayers) {
-                            if (player == p) {
-                                continue;
-                            }
-                            if (player.getLocation().distance(loc) <= 2 &&
-                                    team.get(player).equalsIgnoreCase("yelllow")) {
-                                player.getInventory().addItem(e.getItem().getItemStack());
-                            }
-                        }
+
                     }
+
                     break;
                 case "black":
                     if (loc.distance(plugin.getConfig().getLocation("Black")) <= 3) {
                         if (!splittableItems.contains(e.getItem().getItemStack().getType())) return;
                         if (e.getItem().getOwner() != null) return;
-                        for (Player player : QueueCommand.queuedPlayers) {
-                            if (player == p) {
-                                continue;
-                            }
-                            if (player.getLocation().distance(loc) <= 2 &&
-                                    team.get(player).equalsIgnoreCase("black")) {
-                                player.getInventory().addItem(e.getItem().getItemStack());
-                            }
-                        }
                     }
+
                     break;
+            }
+
+
+            PlayerData playerData;
+            for (Player player : QueueCommand.queuedPlayers) {
+                if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
+                else playerData = new PlayerData(player);
+
+                if (player == p) continue;
+
+                if (player.getLocation().distance(loc) <= 2 && playerData.getPlayerTeam().equals(pData.getPlayerTeam())) {
+                    player.getInventory().addItem(e.getItem().getItemStack());
+                }
             }
         }
     }

@@ -6,19 +6,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
 public class StartCommand implements CommandExecutor {
     GUIs plugin;
-    public StartCommand(GUIs p){
+    public StartCommand(GUIs p) {
         plugin = p;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         Player p = (Player) sender;
-        if (!p.hasPermission("GUIs.startgame")){
+        if (!p.hasPermission("GUIs.startgame")) {
             p.sendMessage("§cYou do not have permission to run this command");
             return true;
         }
