@@ -17,6 +17,12 @@ commands:
     description: adds the specified player to the specified team
     usage: /<command>
     aliases: [bt]
+  setnpc:
+    description: makes the targeted entity a shopkeeper
+    usage: "/setnpc <item/upgrades>"
+  removenpc:
+    description: removes the targeted entity from being a shopkeeper
+    usage: "/removenpc <item/upgrades>"
   startgame:
     description: starts the bedwars game. Only use once there is atleast 1 member assinged to one team!
     usage: /<command>

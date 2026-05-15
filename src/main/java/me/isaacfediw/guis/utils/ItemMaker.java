@@ -1,5 +1,6 @@
 package me.isaacfediw.guis.utils;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,7 @@ public class ItemMaker {
     public static ItemStack buildItem(Material type, String displayName) {
         ItemStack result = new ItemStack(type);
         ItemMeta resultMeta = result.getItemMeta();
-        if (resultMeta != null) resultMeta.setDisplayName(displayName);
+        if (resultMeta != null) resultMeta.displayName(Component.text(displayName));
         result.setItemMeta(resultMeta);
 
         return result;
@@ -34,8 +35,8 @@ public class ItemMaker {
         ItemStack result = new ItemStack(type);
         ItemMeta resultMeta = result.getItemMeta();
         if (resultMeta != null) {
-            resultMeta.setDisplayName(displayName);
-            resultMeta.setLore(Collections.singletonList(lore));
+            resultMeta.displayName(Component.text(displayName));
+            resultMeta.lore(Collections.singletonList(Component.text(lore)));
         }
         result.setItemMeta(resultMeta);
 
@@ -46,8 +47,8 @@ public class ItemMaker {
         ItemStack result = new ItemStack(type);
         ItemMeta resultMeta = result.getItemMeta();
         if (resultMeta != null) {
-            resultMeta.setDisplayName(displayName);
-            resultMeta.setLore(Collections.singletonList(lore));
+            resultMeta.displayName(Component.text(displayName));
+            resultMeta.lore(Collections.singletonList(Component.text(lore)));
             resultMeta.setUnbreakable(unbreakable);
         }
         result.setItemMeta(resultMeta);
@@ -76,7 +77,7 @@ public class ItemMaker {
         ItemStack result = new ItemStack(type);
         ItemMeta resultMeta = result.getItemMeta();
         if (resultMeta != null) {
-            resultMeta.setDisplayName(displayName);
+            resultMeta.displayName(Component.text(displayName));
 
             for (Enchantment enchantment : enchants.keySet()) {
                 resultMeta.addEnchant(enchantment, enchants.get(enchantment), true);
@@ -88,13 +89,13 @@ public class ItemMaker {
         return result;
     }
 
-    public static ItemStack buildItem(Material type, String displayName, List<String> lore, Map<Enchantment, Integer> enchants) {
+    public static ItemStack buildItem(Material type, String displayName, List<Component> lore, Map<Enchantment, Integer> enchants) {
         ItemStack result = new ItemStack(type);
         ItemMeta resultMeta = result.getItemMeta();
 
         if (resultMeta != null) {
-            resultMeta.setDisplayName(displayName);
-            resultMeta.setLore(lore);
+            resultMeta.displayName(Component.text(displayName));
+            resultMeta.lore(lore);
 
             for (Enchantment enchantment : enchants.keySet()) {
                 resultMeta.addEnchant(enchantment, enchants.get(enchantment), true);

@@ -1,6 +1,5 @@
 package me.isaacfediw.guis.events;
 
-import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.utils.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,12 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class PreventFriendlyFire implements Listener {
-
-    GUIs plugin;
-
-    public PreventFriendlyFire(GUIs p) {
-        plugin = p;
-    }
 
     @EventHandler
     public void onPlayerAttackPlayer(EntityDamageByEntityEvent e) {

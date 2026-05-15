@@ -1,9 +1,10 @@
 package me.isaacfediw.guis.events.shops;
 
-import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.ItemShopCommand;
 import me.isaacfediw.guis.utils.ItemMaker;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -13,8 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-//import org.bukkit.persistence.PersistentDataContainer;
-//import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -22,12 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ItemShopListener implements Listener {
-
-    GUIs plugin;
-
     ItemShopCommand shop = new ItemShopCommand();
-
-    public ItemShopListener(GUIs p) {plugin = p;}
 
     @EventHandler
     public void onWeaponClick(InventoryClickEvent e) {
@@ -40,7 +34,10 @@ public class ItemShopListener implements Listener {
         int sharpLevel = playerData.getEnchants().get("sharp");
         int protLevel = playerData.getEnchants().get("prot");
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Combat")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Combat")) {
             switch (e.getSlot()) {
                 case 36:
                     p.closeInventory();
@@ -150,6 +147,7 @@ public class ItemShopListener implements Listener {
                     ironBoots.setItemMeta(ironBootsMeta);
 
                     for (ItemStack armourContent : p.getInventory().getArmorContents()) {
+                        if (armourContent == null) continue;
                         if (armourContent.getType().toString().contains("DIAMOND")) break;
                     }
 
@@ -266,7 +264,10 @@ public class ItemShopListener implements Listener {
 
         Map<String, Boolean> permItems = pData.getPermItems();
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Tools")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Tools")) {
             if (e.getCurrentItem() == null) {
                 return;
             }
@@ -278,7 +279,7 @@ public class ItemShopListener implements Listener {
                 case WOODEN_PICKAXE:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10)) {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
-                        p.getInventory().addItem(new ItemStack(Material.WOODEN_PICKAXE));
+                        p.getInventory().addItem(ItemMaker.buildItem(Material.WOODEN_PICKAXE, true));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Wooden Pickaxe");
 
@@ -290,13 +291,13 @@ public class ItemShopListener implements Listener {
                     }
                     break;
                 case IRON_PICKAXE:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(new ItemStack(Material.WOODEN_PICKAXE), 1)) {
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(ItemMaker.buildItem(Material.WOODEN_PICKAXE, true), 1)) {
                         ItemStack iPick = ItemMaker.buildItem(Material.IRON_PICKAXE, true, new HashMap<Enchantment, Integer>(){{
                             put(Enchantment.DIG_SPEED, 1);
                         }});
 
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
-                        p.getInventory().removeItem(new ItemStack(Material.WOODEN_PICKAXE, 1));
+                        p.getInventory().removeItem(ItemMaker.buildItem(Material.WOODEN_PICKAXE, true));
                         p.getInventory().addItem(iPick);
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Iron Pickaxe");
@@ -328,7 +329,7 @@ public class ItemShopListener implements Listener {
                 case SHEARS:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 20)) {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 20));
-                        p.getInventory().addItem(new ItemStack(Material.SHEARS));
+                        p.getInventory().addItem(ItemMaker.buildItem(Material.SHEARS, true));
                         p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Shears");
 
@@ -342,7 +343,7 @@ public class ItemShopListener implements Listener {
                 case WOODEN_AXE:
                     if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10)) {
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
-                        p.getInventory().addItem(new ItemStack(Material.WOODEN_AXE));
+                        p.getInventory().addItem(ItemMaker.buildItem(Material.WOODEN_AXE, true));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Wooden Axe");
 
@@ -354,13 +355,13 @@ public class ItemShopListener implements Listener {
                     }
                     break;
                 case IRON_AXE:
-                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(new ItemStack(Material.WOODEN_AXE), 1)) {
+                    if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 10) && p.getInventory().containsAtLeast(ItemMaker.buildItem(Material.WOODEN_AXE, true), 1)) {
                         ItemStack iAxe = ItemMaker.buildItem(Material.IRON_AXE, true, new HashMap<Enchantment, Integer>(){{
                             put(Enchantment.DIG_SPEED, 1);
                         }});
 
                         p.getInventory().removeItem(new ItemStack(Material.IRON_INGOT, 10));
-                        p.getInventory().removeItem((new ItemStack(Material.WOODEN_AXE)));
+                        p.getInventory().removeItem(ItemMaker.buildItem(Material.WOODEN_AXE, true));
                         p.getInventory().addItem(iAxe);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                         p.sendMessage("§6Purchased Iron Axe");
@@ -402,7 +403,10 @@ public class ItemShopListener implements Listener {
         if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
         else playerData = new PlayerData(p);
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Blocks")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Blocks")) {
             if (e.getCurrentItem() == null) {
                 return;
             }
@@ -491,7 +495,10 @@ public class ItemShopListener implements Listener {
     public void onPotionsClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Potions")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Potions")) {
             switch (e.getSlot()) {
                 case 27:
                     p.closeInventory();
@@ -566,7 +573,10 @@ public class ItemShopListener implements Listener {
     public void onSpecialClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Special Items")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Special Items")) {
             if (e.getCurrentItem() == null) {
                 return;
             }

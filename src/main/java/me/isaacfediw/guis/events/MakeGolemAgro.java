@@ -16,11 +16,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
-//import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class MakeGolemAgro implements Listener {
 
-    GUIs plugin;
+    private final GUIs plugin;
     private final HashMap<IronGolem, Player> playerGolems = new HashMap<>();
     public MakeGolemAgro(GUIs p) {
         plugin = p;

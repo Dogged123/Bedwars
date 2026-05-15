@@ -12,8 +12,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 import java.util.ArrayList;
 
-//import static me.isaacfediw.guis.commands.QueueCommand.team;
-
 public class SplitGens implements Listener {
 
     private final GUIs plugin;
@@ -36,10 +34,8 @@ public class SplitGens implements Listener {
             if (PlayerData.playersData.containsKey(p)) pData = PlayerData.playersData.get(p);
             else pData = new PlayerData(p);
 
-            //if (team.get(p) == null) return;
             if (pData.getPlayerTeam().equals("N/A")) return;
 
-            //switch (team.get(p).toLowerCase()) {
             switch (pData.getPlayerTeam().toLowerCase()) {
                 case "red":
                     if (loc.distance(plugin.getConfig().getLocation("Red")) <= 3) {

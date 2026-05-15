@@ -1,9 +1,10 @@
 package me.isaacfediw.guis.events.shops;
 
-import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.ItemShopCommand;
 import me.isaacfediw.guis.utils.ItemMaker;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,18 +20,16 @@ import java.util.Map;
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
 public class ShopListeners implements Listener {
-    GUIs plugin;
-
-    public ShopListeners(GUIs p) {
-        plugin = p;
-    }
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
         ItemShopCommand shop = new ItemShopCommand();
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase("§6Item Shop")) {
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("§6Item Shop")) {
             if (e.getCurrentItem() == null) {
                 return;
             }
@@ -57,8 +56,7 @@ public class ShopListeners implements Listener {
                     break;
             }
             e.setCancelled(true);
-
-        } else if (e.getView().getTitle().equalsIgnoreCase("§6Upgrades Shop")) {
+        } else if (title.equalsIgnoreCase("§6Upgrades Shop")) {
 
             PlayerData pData;
 
@@ -90,6 +88,7 @@ public class ShopListeners implements Listener {
                             if (playerData.getPlayerTeam().equals(pData.getPlayerTeam())) {
                                 for (ItemStack i : player.getInventory().getContents()) {
                                     try {
+                                        if (i == null) continue;
                                         if (i.getType().equals(Material.WOODEN_SWORD) || i.getType().equals(Material.STONE_SWORD) || i.getType().equals(Material.IRON_SWORD) || i.getType().equals(Material.DIAMOND_SWORD)) {
                                             i.addEnchantment(Enchantment.DAMAGE_ALL, 1);
                                             playerEnchants.replace("sharp", 1);

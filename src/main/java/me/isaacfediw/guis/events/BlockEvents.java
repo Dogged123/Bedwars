@@ -16,12 +16,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.ArrayList;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
-//import static me.isaacfediw.guis.commands.QueueCommand.team;
 
 public class BlockEvents implements Listener {
     public static ArrayList<Block> breakableBlocks = new ArrayList<>();
 
-    GUIs plugin;
+    private final GUIs plugin;
     public BlockEvents(GUIs p){
         plugin = p;
     }

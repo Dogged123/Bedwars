@@ -1,5 +1,6 @@
 package me.isaacfediw.guis.commands;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+
+import static me.isaacfediw.guis.events.GameEvents.teams;
 
 public class OpenScoreboard implements CommandExecutor {
 
@@ -37,9 +40,9 @@ public class OpenScoreboard implements CommandExecutor {
     }
 
     public void setInitialScoreboard(List<Player> players) {
-        if (manager != null) scoreboard = manager.getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("bedwars", Criteria.DUMMY, "§eBEDWARS");
-        health = scoreboard.registerNewObjective("showHealth", Criteria.DUMMY, "§c♥");
+        scoreboard = manager.getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("bedwars", Criteria.DUMMY, Component.text("§eBEDWARS"));
+        health = scoreboard.registerNewObjective("showHealth", Criteria.DUMMY, Component.text("§c♥"));
 
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
@@ -71,28 +74,29 @@ public class OpenScoreboard implements CommandExecutor {
 
     public void removeScoreboard(List<Player> players) {
         for (Player p : players) {
-            if (manager == null) break;
             p.setScoreboard(manager.getNewScoreboard());
         }
     }
 
     public void setRedScoreboard() {
-        redStatus = "(1)";
+        redStatus = "(" + teams.get(0).size() + ")";
     }
 
     public void setYellowScoreboard() {
-        yellowStatus = "(1)";
+        yellowStatus = "(" + teams.get(1).size() + ")";
     }
 
     public void setBlueScoreboard() {
-        blueStatus = "(1)";
+        blueStatus = "(" + teams.get(2).size() + ")";
     }
 
     public void setBlackScoreboard() {
-        blackStatus = "(1)";
+        blackStatus = "(" + teams.get(3).size() + ")";
     }
 
     public void updateHealthScoreboard() {
+        if (scoreboard == null || health == null) return;
+
         Score pHealth;
         for (Player p : Bukkit.getOnlinePlayers()) {
             pHealth = health.getScore("§e" + p.getHealth());

@@ -1,6 +1,8 @@
 package me.isaacfediw.guis.events;
 
 import me.isaacfediw.guis.GUIs;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,21 +10,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class WandMenuListener implements Listener {
-    GUIs plugin;
-    public WandMenuListener(GUIs p){
-        plugin = p;
-    }
+    private final GUIs plugin;
+
+    public WandMenuListener(GUIs p) {plugin = p;}
 
     @EventHandler
-    public void onQueOrArenaClick(InventoryClickEvent e){
+    public void onQueOrArenaClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equalsIgnoreCase("AddBase")){
-            switch (e.getSlot()){
+        Component titleComp = e.getView().title();
+        String title = LegacyComponentSerializer.legacySection().serialize(titleComp);
+
+        if (title.equalsIgnoreCase("AddBase")) {
+            switch (e.getSlot()) {
                 case 0:
                     p.closeInventory();
                     setArena("Red", p);
-                    p.sendMessage();
                     break;
                 case 1:
                     p.closeInventory();
@@ -75,8 +78,9 @@ public class WandMenuListener implements Listener {
             }
             e.setCancelled(true);
         }
-        if (e.getView().getTitle().equalsIgnoreCase("DeleteBase")){
-            switch (e.getSlot()){
+
+        if (title.equalsIgnoreCase("DeleteBase")) {
+            switch (e.getSlot()) {
                 case 0:
                     p.closeInventory();
                     removeArena("Red", p);
@@ -134,7 +138,7 @@ public class WandMenuListener implements Listener {
         }
     }
 
-    public void setArena(String locationName, Player p){
+    public void setArena(String locationName, Player p) {
         Location loc = p.getLocation();
 
         plugin.getConfig().set(locationName, loc);
@@ -142,8 +146,8 @@ public class WandMenuListener implements Listener {
         p.sendMessage("§d" + locationName + " area set to your location!");
     }
 
-    public void removeArena(String locationName, Player p){
-        if (plugin.getConfig().get(locationName) == null){
+    public void removeArena(String locationName, Player p) {
+        if (plugin.getConfig().get(locationName) == null) {
             p.sendMessage("§cThis area is not set up!");
             p.closeInventory();
             return;

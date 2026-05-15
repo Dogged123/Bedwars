@@ -2,6 +2,7 @@ package me.isaacfediw.guis.commands;
 
 import me.isaacfediw.guis.utils.ItemMaker;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -31,7 +32,7 @@ public class ItemShopCommand implements CommandExecutor {
             openItemShop(p);
         } else {
             if (args.length == 0) {
-                System.out.println("Please specify a player to open the shop for!");
+                sender.sendMessage("Please specify a player to open the shop for!");
                 return true;
             }
 
@@ -42,7 +43,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openItemShop(Player p) {
-        Inventory itemshop = Bukkit.createInventory(p, 9, "§6Item Shop");
+        Inventory itemshop = Bukkit.createInventory(p, 9, Component.text("§6Item Shop"));
 
         ItemStack weapons = ItemMaker.buildItem(Material.GOLDEN_SWORD, "§6Combat");
         ItemStack tools   = ItemMaker.buildItem(Material.GOLDEN_PICKAXE, "§6Tools");
@@ -60,7 +61,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openCombatShop(Player p) {
-        Inventory combatShop = Bukkit.createInventory(p, 45, "§6Combat");
+        Inventory combatShop = Bukkit.createInventory(p, 45, Component.text("§6Combat"));
 
         ItemStack back     = ItemMaker.buildItem(Material.SPECTRAL_ARROW, "§6Back");
         ItemStack ssword   = ItemMaker.buildItem(Material.STONE_SWORD, "§7Stone Sword", "§6Cost: 10 Iron");
@@ -91,7 +92,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openToolsShop(Player p) {
-        Inventory toolsShop = Bukkit.createInventory(p, 36, "§6Tools");
+        Inventory toolsShop = Bukkit.createInventory(p, 36, Component.text("§6Tools"));
 
         ItemStack back     = ItemMaker.buildItem(Material.SPECTRAL_ARROW, "§6Back");
         ItemStack wpickaxe = ItemMaker.buildItem(Material.WOODEN_PICKAXE, "§6Wooden Pickaxe", "§6Cost: 10 Iron");
@@ -115,7 +116,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openBlocksShop(Player p) {
-        Inventory blocksShop = Bukkit.createInventory(p, 36, "§6Blocks");
+        Inventory blocksShop = Bukkit.createInventory(p, 36, Component.text("§6Blocks"));
 
         PlayerData playerData;
 
@@ -145,7 +146,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openPotionsShop(Player p) {
-        Inventory potionsShop = Bukkit.createInventory(p, 36, "§6Potions");
+        Inventory potionsShop = Bukkit.createInventory(p, 36, Component.text("§6Potions"));
 
         ItemStack back  = ItemMaker.buildItem(Material.SPECTRAL_ARROW, "§6Back");
         ItemStack speed = ItemMaker.buildItem(Material.POTION, "§bSpeed Potion", "§6Cost: 1 Emerald");
@@ -182,7 +183,7 @@ public class ItemShopCommand implements CommandExecutor {
     }
 
     public void openSpecialShop(Player p) {
-        Inventory specialShop = Bukkit.createInventory(p, 36, "§6Special Items");
+        Inventory specialShop = Bukkit.createInventory(p, 36, Component.text("§6Special Items"));
 
         ItemStack back      = ItemMaker.buildItem(Material.SPECTRAL_ARROW, "§6Back");
         ItemStack fireball  = ItemMaker.buildItem(Material.FIRE_CHARGE, "§eFireball", "§6Cost: 40 Iron");

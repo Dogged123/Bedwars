@@ -9,12 +9,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
 public class VanishCommand implements CommandExecutor {
 
-    GUIs plugin;
+    private final GUIs plugin;
     private final ArrayList<Player> vanishedPlayers = new ArrayList<>();
 
     public VanishCommand(GUIs p) {
@@ -25,12 +26,12 @@ public class VanishCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player)) {
             if (args.length == 0) {
-                System.out.println("Please enter the name of the player you would like to vanish");
+                sender.sendMessage("Please enter the name of the player you would like to vanish");
                 return true;
             }
             Player p = Bukkit.getPlayer(args[0]);
             if (p == null) {
-                System.out.println("That player is not online! Choose another player!");
+                sender.sendMessage("That player is not online! Choose another player!");
                 return true;
             }
             vanishPlayer(p);
@@ -46,7 +47,7 @@ public class VanishCommand implements CommandExecutor {
                     player.hidePlayer(plugin, p);
                 }
             }
-            System.out.println((p.getName() + " is now vanished!"));
+            plugin.getLogger().log(Level.INFO, p.getName() + " is now vanished!");
         } else {
             vanishedPlayers.remove(p);
             for (Player player : queuedPlayers) {
@@ -54,7 +55,7 @@ public class VanishCommand implements CommandExecutor {
                     player.showPlayer(plugin, p);
                 }
             }
-            System.out.println(p.getName() + " is now visible!");
+            plugin.getLogger().log(Level.INFO, p.getName() + " is now visible!");
         }
     }
 }

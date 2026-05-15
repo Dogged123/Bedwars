@@ -3,6 +3,7 @@ package me.isaacfediw.guis.commands;
 import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.events.GameEvents;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -14,13 +15,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
-//import static me.isaacfediw.guis.commands.QueueCommand.team;
-
 public class TeamAdder implements CommandExecutor {
-
     String playerName;
     Player target;
-    GUIs plugin;
+    private final GUIs plugin;
 
     public TeamAdder(GUIs p) {
         plugin = p;
@@ -50,8 +48,6 @@ public class TeamAdder implements CommandExecutor {
     }
 
     public void addToTeam(Player p, String[] args) {
-        //if (!team.containsKey(p)) team.put(p, "N/A");
-
         PlayerData playerData;
 
         if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
@@ -59,22 +55,18 @@ public class TeamAdder implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("Red")) {
             addToTeam(p, 0);
-            //team.replace(p, "Red")
             playerData.setPlayerTeam("Red");
             p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
         } else if (args[0].equalsIgnoreCase("Yellow")) {
             addToTeam(p, 1);
-            //team.replace(p, "Yellow");
             playerData.setPlayerTeam("Yellow");
             p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
         } else if (args[0].equalsIgnoreCase("Blue")) {
             addToTeam(p, 2);
-            //team.replace(p, "Blue");
             playerData.setPlayerTeam("Blue");
             p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
         } else if (args[0].equalsIgnoreCase("Black")) {
             addToTeam(p, 3);
-            //team.replace(p, "Black");
             playerData.setPlayerTeam("Black");
             p.sendMessage("§aSuccessfully added " + playerName + " to " + args[0] + " team!");
         } else {
@@ -101,19 +93,19 @@ public class TeamAdder implements CommandExecutor {
 
         if (index == 0) {
             gam.addToTeam(0, "Red", p);
-            p.setPlayerListName("§c" + p.getName());
+            p.playerListName(Component.text("§c" + p.getName()));
             armourColour = Color.RED;
         } else if (index == 1) {
             gam.addToTeam(1, "Yellow", p);
-            p.setPlayerListName("§e" + p.getName());
+            p.playerListName(Component.text("§e" + p.getName()));
             armourColour = Color.YELLOW;
         } else if (index == 2) {
             gam.addToTeam(2, "Blue", p);
-            p.setPlayerListName("§1" + p.getName());
+            p.playerListName(Component.text("§1" + p.getName()));
             armourColour = Color.BLUE;
         } else if (index == 3) {
             gam.addToTeam(3, "Black", p);
-            p.setPlayerListName("§0" + p.getName());
+            p.playerListName(Component.text("§0" + p.getName()));
             armourColour = Color.BLACK;
         }
 

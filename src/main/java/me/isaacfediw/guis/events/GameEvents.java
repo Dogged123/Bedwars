@@ -4,9 +4,11 @@ import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.OpenScoreboard;
 import me.isaacfediw.guis.utils.ItemMaker;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -14,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +40,7 @@ public class GameEvents implements Listener {
 
     public static int aliveTeams = 0;
 
-    GUIs plugin;
+    private final GUIs plugin;
 
     public GameEvents(GUIs p) {
         plugin = p;
@@ -83,16 +86,16 @@ public class GameEvents implements Listener {
 
         switch (bed) {
             case "Red":
-                Bukkit.broadcastMessage("§c" + bed + " bed has been broken by " + p.getName() + "!");
+                Bukkit.broadcast(Component.text("§c" + bed + " bed has been broken by " + p.getName() + "!"));
                 break;
             case "Yellow":
-                Bukkit.broadcastMessage("§e" + bed + " bed has been broken by " + p.getName() + "!");
+                Bukkit.broadcast(Component.text("§e" + bed + " bed has been broken by " + p.getName() + "!"));
                 break;
             case "Blue":
-                Bukkit.broadcastMessage("§1" + bed + " bed has been broken by " + p.getName() + "!");
+                Bukkit.broadcast(Component.text("§1" + bed + " bed has been broken by " + p.getName() + "!"));
                 break;
             case "Black":
-                Bukkit.broadcastMessage("§0" + bed + " bed has been broken by " + p.getName() + "!");
+                Bukkit.broadcast(Component.text("§0" + bed + " bed has been broken by " + p.getName() + "!"));
                 break;
         }
         for (Player onlinePlayers : Bukkit.getOnlinePlayers()) {
@@ -117,14 +120,16 @@ public class GameEvents implements Listener {
     }
 
     private void startGens(Location redLoc, Location yellowLoc, Location blueLoc, Location blackLoc) {
-        Location diamond1Loc = plugin.getConfig().getLocation("Diamond1") == null ? null : plugin.getConfig().getLocation("Diamond1");
-        Location diamond2Loc = plugin.getConfig().getLocation("Diamond2") == null ? null : plugin.getConfig().getLocation("Diamond2");
-        Location diamond3Loc = plugin.getConfig().getLocation("Diamond3") == null ? null : plugin.getConfig().getLocation("Diamond3");
-        Location diamond4Loc = plugin.getConfig().getLocation("Diamond4") == null ? null : plugin.getConfig().getLocation("Diamond4");
-        Location emerald1Loc = plugin.getConfig().getLocation("Emerald1") == null ? null : plugin.getConfig().getLocation("Emerald1");
-        Location emerald2Loc = plugin.getConfig().getLocation("Emerald2") == null ? null : plugin.getConfig().getLocation("Emerald2");
-        Location emerald3Loc = plugin.getConfig().getLocation("Emerald3") == null ? null : plugin.getConfig().getLocation("Emerald3");
-        Location emerald4Loc = plugin.getConfig().getLocation("Emerald4") == null ? null : plugin.getConfig().getLocation("Emerald4");
+        Location diamond1Loc = plugin.getConfig().getLocation("Diamond1");
+        Location diamond2Loc = plugin.getConfig().getLocation("Diamond2");
+        Location diamond3Loc = plugin.getConfig().getLocation("Diamond3");
+        Location diamond4Loc = plugin.getConfig().getLocation("Diamond4");
+        Location emerald1Loc = plugin.getConfig().getLocation("Emerald1");
+        Location emerald2Loc = plugin.getConfig().getLocation("Emerald2");
+        Location emerald3Loc = plugin.getConfig().getLocation("Emerald3");
+        Location emerald4Loc = plugin.getConfig().getLocation("Emerald4");
+
+        GUIs.genMarkers.clear();
 
         plugin.generator(redLoc, 40, "IRON_INGOT", 1000);
         plugin.generator(redLoc, 400, "GOLD_INGOT", 1000);
@@ -172,22 +177,22 @@ public class GameEvents implements Listener {
         Location blackLoc = plugin.getConfig().getLocation("Black");
 
         if (redLoc == null) {
-            Bukkit.broadcastMessage("§cRed base is not set up!");
+            Bukkit.broadcast(Component.text("§cRed base is not set up!"));
             return;
         }
 
         if (yellowLoc == null) {
-            Bukkit.broadcastMessage("§cYellow base is not set up!");
+            Bukkit.broadcast(Component.text("§cYellow base is not set up!"));
             return;
         }
 
         if (blueLoc == null) {
-            Bukkit.broadcastMessage("§cBlue base is not set up!");
+            Bukkit.broadcast(Component.text("§cBlue base is not set up!"));
             return;
         }
 
         if (blackLoc == null) {
-            Bukkit.broadcastMessage("§cBlack base is not set up!");
+            Bukkit.broadcast(Component.text("§cBlack base is not set up!"));
             return;
         }
 
@@ -205,7 +210,6 @@ public class GameEvents implements Listener {
             if (PlayerData.playersData.containsKey(player)) playerData = PlayerData.playersData.get(player);
             else playerData = new PlayerData(player);
 
-            //switch (team.get(player))) {
             switch (playerData.getPlayerTeam()) {
                 case "Red":
                     bedLoc = redLoc;
@@ -255,11 +259,12 @@ public class GameEvents implements Listener {
 
                 Location queLoc = plugin.getConfig().getLocation("Que");
 
-                player.setPlayerListName("§f" + player.getName());
+                player.playerListName(Component.text("§f" + player.getName()));
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SURVIVAL);
                 if (queLoc != null) player.teleport(queLoc);
                 player.setBedSpawnLocation(queLoc, true);
+                player.removePotionEffect(PotionEffectType.FAST_DIGGING);
                 player.getEnderChest().clear();
 
                 playerData.setLifeStatus("N/A");
@@ -275,15 +280,15 @@ public class GameEvents implements Listener {
 
         sb.removeScoreboard(queuedPlayers);
 
-        for (List<String> team : teams) {
-            team.clear();
-        }
+        for (List<String> team : teams) team.clear();
 
-        for (Block b : breakableBlocks) {
-            b.setType(Material.AIR);
-        }
+        for (ArmorStand genMarker : GUIs.genMarkers) genMarker.remove();
+
+        for (Block b : breakableBlocks) b.setType(Material.AIR);
+
         queuedPlayers.clear();
         breakableBlocks.clear();
+        GUIs.genMarkers.clear();
 
         World world = Bukkit.getWorld("world");
         if (world == null) return;

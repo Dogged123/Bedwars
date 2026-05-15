@@ -3,8 +3,11 @@ package me.isaacfediw.guis.events;
 import me.isaacfediw.guis.GUIs;
 import me.isaacfediw.guis.commands.OpenScoreboard;
 import me.isaacfediw.guis.commands.StopCommand;
+import me.isaacfediw.guis.utils.Constants;
 import me.isaacfediw.guis.utils.ItemMaker;
 import me.isaacfediw.guis.utils.PlayerData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -15,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +28,7 @@ import static me.isaacfediw.guis.events.GameEvents.teams;
 
 public class PlayerDeathEvent implements Listener {
 
-    GUIs plugin;
+    private final GUIs plugin;
 
     public PlayerDeathEvent(GUIs p) {
         plugin = p;
@@ -57,14 +61,16 @@ public class PlayerDeathEvent implements Listener {
             playerData.setLifeStatus("Dead");
 
             for (List<String> team : teams) {
-                team.remove(p.getName());
-                if (team.isEmpty()) aliveTeams--;
+                if (team.contains(p.getName())) {
+                    team.remove(p.getName());
+
+                    if (team.isEmpty()) {
+                        aliveTeams --;
+                        break;
+                    }
+                }
             }
 
-            if (aliveTeams == 1) {
-                StopCommand stop = new StopCommand(plugin);
-                stop.stopGame();
-            }
             p.sendMessage("§cEliminated!");
             p.setGameMode(GameMode.SPECTATOR);
 
@@ -88,35 +94,45 @@ public class PlayerDeathEvent implements Listener {
             sb.setInitialScoreboard(queuedPlayers);
 
             if (p.getLocation().getY() <= 0 && p.getKiller() != null) {
-                e.setDeathMessage("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". §c§lFINAL KILL!");
+                e.deathMessage(Component.text("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". §c§lFINAL KILL!"));
             } else if (p.getLocation().getY() <= 0) {
-                e.setDeathMessage("§c" + p.getName() + " fell into the void. §c§lFINAL KILL!");
+                e.deathMessage(Component.text("§c" + p.getName() + " fell into the void. §c§lFINAL KILL!"));
             } else if (p.getKiller() != null) {
-                e.setDeathMessage("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName() + ". §c§lFINAL KILL!");
+                e.deathMessage(Component.text("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName() + ". §c§lFINAL KILL!"));
             } else {
-                e.setDeathMessage("§c" + p.getName() + " was killed by Covid 19. §c§lFINAL KILL!");
+                e.deathMessage(Component.text("§c" + p.getName() + " was killed by Covid 19. §c§lFINAL KILL!"));
             }
+
+            if (p.getKiller() != null) Constants.playRandomKillEffect(p.getKiller(), p);
+
+            if (aliveTeams == 1) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        StopCommand stop = new StopCommand(plugin);
+                        stop.stopGame();
+                    }, 20*5L);
+            }
+
             return;
         }
 
         if (p.getLocation().getY() <= 0 && p.getKiller() != null) {
-            e.setDeathMessage("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". ");
+            e.deathMessage(Component.text("§c" + p.getName() + " was hit into the void by " + p.getKiller().getName() + ". "));
         } else if (p.getLocation().getY() <= 0) {
-            e.setDeathMessage("§c" + p.getName() + " fell into the void.");
+            e.deathMessage(Component.text("§c" + p.getName() + " fell into the void."));
         } else if (p.getKiller() != null) {
-            e.setDeathMessage("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName());
+            e.deathMessage(Component.text("§c" + p.getName() + " was lethally slapped by " + p.getKiller().getName()));
         } else {
-            e.setDeathMessage("§c" + p.getName() + " was killed by Covid 19");
+            e.deathMessage(Component.text("§c" + p.getName() + " was killed by Covid 19"));
         }
+
+        if (p.getKiller() != null) Constants.playRandomKillEffect(p.getKiller(), p);
     }
 
     @EventHandler
     public void playerRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
 
-        if (!queuedPlayers.contains(p)) {
-            return;
-        }
+        if (!queuedPlayers.contains(p)) return;
 
         PlayerData playerData;
         if (PlayerData.playersData.containsKey(p)) playerData = PlayerData.playersData.get(p);
@@ -160,7 +176,7 @@ public class PlayerDeathEvent implements Listener {
                     }
                     p.setGameMode(GameMode.SURVIVAL);
 
-                    //Restore wooden sword
+                    // Restore wooden sword
                     ItemStack sword = ItemMaker.buildItem(Material.WOODEN_SWORD, true);
                     ItemMeta swordMeta = sword.getItemMeta();
 
@@ -170,23 +186,36 @@ public class PlayerDeathEvent implements Listener {
                     sword.setItemMeta(swordMeta);
                     p.getInventory().addItem(sword);
 
-                    //Restore armour
+                    // Restore armour
                     p.getInventory().setHelmet(playerData.getArmour()[0]);
                     p.getInventory().setChestplate(playerData.getArmour()[1]);
                     p.getInventory().setLeggings(playerData.getArmour()[2]);
                     p.getInventory().setBoots(playerData.getArmour()[3]);
 
-                    //Restore tools
+                    // Restore tools
                     Map<String, Boolean> tools = playerData.getPermItems();
-                    if (tools.get("pick")) p.getInventory().addItem(new ItemStack(Material.WOODEN_PICKAXE));
-                    if (tools.get("axe")) p.getInventory().addItem(new ItemStack(Material.WOODEN_AXE));
-                    if (tools.get("shears")) p.getInventory().addItem(new ItemStack(Material.SHEARS));
+                    if (tools.get("pick")) p.getInventory().addItem(ItemMaker.buildItem(Material.WOODEN_PICKAXE, true));
+                    if (tools.get("axe")) p.getInventory().addItem(ItemMaker.buildItem(Material.WOODEN_AXE, true));
+                    if (tools.get("shears")) p.getInventory().addItem(ItemMaker.buildItem(Material.SHEARS, true));
 
-                    p.sendTitle("§aRespawned!", "", 5, 20, 5);
+                    Title.Times times = Title.Times.times(
+                            Duration.ofMillis(250),  // Fade in
+                            Duration.ofMillis(1000), // Stay
+                            Duration.ofMillis(250)  // Fade out
+                    );
+
+                    p.showTitle(Title.title(Component.text("§aRespawned!"), Component.text(""), times));
                     cancel();
                     return;
                 }
-                p.sendTitle("§cYou died!", "§c" + deathTimeLeft, 0, 20, 0);
+
+                Title.Times times = Title.Times.times(
+                        Duration.ofMillis(0),  // Fade in
+                        Duration.ofMillis(1000), // Stay
+                        Duration.ofMillis(0)  // Fade out
+                );
+
+                p.showTitle(Title.title(Component.text("§cYou died!"), Component.text("§c" + deathTimeLeft), times));
                 p.playSound(p, Sound.BLOCK_NOTE_BLOCK_HAT, 10, 1);
                 deathTimeLeft--;
             }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static me.isaacfediw.guis.commands.QueueCommand.queuedPlayers;
 
 public class StartCommand implements CommandExecutor {
-    GUIs plugin;
+    private final GUIs plugin;
     public StartCommand(GUIs p) {
         plugin = p;
     }

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StopCommand implements CommandExecutor {
 
-    GUIs plugin;
+    private final GUIs plugin;
 
     public StopCommand(GUIs p) {
         plugin = p;
